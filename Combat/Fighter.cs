@@ -1,3 +1,4 @@
+using System;
 using RPG.Core;
 using RPG.Movement;
 using UnityEngine;
@@ -9,12 +10,19 @@ namespace RPG.Combat
         [SerializeField] float weaponRange = 2f;
         [SerializeField] float timeBetweenAttacks = 1.1f; 
         [SerializeField] float weaponDamage = 5f;
+        [SerializeField] GameObject weaponPrefab = null;
+        [SerializeField] Transform handTransform = null;
+        [SerializeField] AnimatorOverrideController weaponOverride = null;
         
         Health target = null;
         float timeSinceLastAttack = Mathf.Infinity;
         bool isAttacking;
 
         public bool IsAttacking { get => isAttacking; private set => isAttacking = value; }
+
+        private void Start() {
+            SpawnWeapon();
+        }
 
         private void Update()
         {
@@ -38,6 +46,47 @@ namespace RPG.Combat
             }
         }
 
+        public void Attack(GameObject combatTarget)
+        {
+            GetComponent<ActionScheduler>().StartAction(this);
+            target = combatTarget.GetComponent<Health>();
+            IsAttacking = true;
+        }
+
+        public void Cancel()
+        {
+            StopAttack();
+            target = null;
+            IsAttacking = false;
+            GetComponent<Mover>().Cancel();
+        }
+
+        public bool CanAttack(GameObject combatTarget)
+        {
+            if (combatTarget == null)
+            {
+                return false;
+            }
+            Health targetToTest = combatTarget.GetComponent<Health>();
+            return targetToTest != null && !targetToTest.IsDead();
+        }
+
+        // Animation Event (triggered from the animation at the point in the animation that hit the enemy)
+        void Hit()
+        {
+            if (target != null)
+            {
+                target.TakeDamage(weaponDamage);
+            }
+        }
+
+        private void SpawnWeapon()
+        {
+            Instantiate(weaponPrefab, handTransform);
+            Animator animator = GetComponent<Animator>();
+            animator.runtimeAnimatorController = weaponOverride;
+        }
+
         private void AttackBehaviour()
         {
             transform.LookAt(target.transform);
@@ -56,40 +105,11 @@ namespace RPG.Combat
             GetComponent<Animator>().SetTrigger("attack");
         }
 
-        // Animation Event (triggered from the animation at the point in the animation that hit the enemy)
-        void Hit()
-        {
-            if(target!=null){
-                target.TakeDamage(weaponDamage);
-            }
-        }
+
 
         private bool GetIsInRange()
         {
             return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
-        }
-
-        public bool CanAttack(GameObject combatTarget){
-            if(combatTarget== null){
-                return false;
-            }
-            Health targetToTest = combatTarget.GetComponent<Health>();
-            return targetToTest != null && !targetToTest.IsDead();
-        }
-
-        public void Attack(GameObject combatTarget)
-        {
-            GetComponent<ActionScheduler>().StartAction(this);
-            target = combatTarget.GetComponent<Health>();
-            IsAttacking = true;
-        }
-
-        public void Cancel()
-        {
-            StopAttack();
-            target = null;
-            IsAttacking = false;
-            GetComponent<Mover>().Cancel();
         }
 
         private void StopAttack()

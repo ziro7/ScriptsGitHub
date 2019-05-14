@@ -7,21 +7,18 @@ namespace RPG.Combat
 {
     public class Fighter : MonoBehaviour, IAction
     {
-        [SerializeField] float weaponRange = 2f;
-        [SerializeField] float timeBetweenAttacks = 1.1f; 
-        [SerializeField] float weaponDamage = 5f;
-        [SerializeField] GameObject weaponPrefab = null;
         [SerializeField] Transform handTransform = null;
-        [SerializeField] AnimatorOverrideController weaponOverride = null;
-        
+        [SerializeField] Weapon defaultWeapon = null;
+
         Health target = null;
+        Weapon currentWeapon = null;
         float timeSinceLastAttack = Mathf.Infinity;
         bool isAttacking;
 
         public bool IsAttacking { get => isAttacking; private set => isAttacking = value; }
 
         private void Start() {
-            SpawnWeapon();
+            EquipWeapon(defaultWeapon);
         }
 
         private void Update()
@@ -71,26 +68,27 @@ namespace RPG.Combat
             return targetToTest != null && !targetToTest.IsDead();
         }
 
+        public void EquipWeapon(Weapon weapon)
+        {
+            currentWeapon = weapon;
+            Animator animator = GetComponent<Animator>();
+            weapon.Spawn(handTransform, animator);
+        }
+
         // Animation Event (triggered from the animation at the point in the animation that hit the enemy)
         void Hit()
         {
             if (target != null)
             {
-                target.TakeDamage(weaponDamage);
+                target.TakeDamage(currentWeapon.WeaponDamage);
             }
         }
 
-        private void SpawnWeapon()
-        {
-            Instantiate(weaponPrefab, handTransform);
-            Animator animator = GetComponent<Animator>();
-            animator.runtimeAnimatorController = weaponOverride;
-        }
 
         private void AttackBehaviour()
         {
             transform.LookAt(target.transform);
-            if (timeSinceLastAttack> timeBetweenAttacks)
+            if (timeSinceLastAttack> defaultWeapon.WeaponSpeed)
             {
                 // This will trigger the Hit() event.
                 TriggerAttack();
@@ -105,11 +103,9 @@ namespace RPG.Combat
             GetComponent<Animator>().SetTrigger("attack");
         }
 
-
-
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
+            return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.WeaponRange;
         }
 
         private void StopAttack()

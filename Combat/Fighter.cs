@@ -7,7 +7,8 @@ namespace RPG.Combat
 {
     public class Fighter : MonoBehaviour, IAction
     {
-        [SerializeField] Transform handTransform = null;
+        [SerializeField] Transform leftHandTransform = null;
+        [SerializeField] Transform rightHandTransform = null;
         [SerializeField] Weapon defaultWeapon = null;
 
         Health target = null;
@@ -72,7 +73,7 @@ namespace RPG.Combat
         {
             currentWeapon = weapon;
             Animator animator = GetComponent<Animator>();
-            weapon.Spawn(handTransform, animator);
+            weapon.Spawn(rightHandTransform, leftHandTransform, animator);
         }
 
         // Animation Event (triggered from the animation at the point in the animation that hit the enemy)

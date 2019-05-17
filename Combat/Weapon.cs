@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using RPG.Core;
+using UnityEngine;
 
 namespace RPG.Combat
 {
@@ -11,6 +13,7 @@ namespace RPG.Combat
         [SerializeField] float weaponSpeed = 1.1f;
         [SerializeField] float weaponDamage = 5f;
         [SerializeField] bool isRightHanded = true;
+        [SerializeField] Projectile projectile = null;
 
         public float WeaponRange { get => weaponRange; private set => weaponRange = value; }
         public float WeaponSpeed { get => weaponSpeed; private set => weaponSpeed = value; }
@@ -20,16 +23,56 @@ namespace RPG.Combat
         {
             if(equippedPrefab != null)
             {
-                Transform handTransform;
-                handTransform = isRightHanded ? rightHand : leftHand;
+                Transform handTransform = GetTransform(rightHand, leftHand);
                 Instantiate(equippedPrefab, handTransform);
             }
-            
-            if(animatorOverride != null)
+
+            if (animatorOverride != null)
             {
                 animator.runtimeAnimatorController = animatorOverride;
             }
         }
+
+        private Transform GetTransform(Transform rightHand, Transform leftHand)
+        {
+            return isRightHanded ? rightHand : leftHand;
+        }
+
+        public bool HasProjectile()
+        {
+            if(projectile != null){
+                if (!PoolDictionary.pools.ContainsKey(projectile.name)){
+                    PoolDictionary.AddPool(projectile.name, () => SpawnProjectile(), 25);
+                }
+                return true;
+            } else
+            {
+                return false;    
+            }
+        }
+
+        private GameObject SpawnProjectile()
+        {
+            GameObject projectilePrefab = GameObject.Find(projectile.name);
+            GameObject projectileToSpawn = Instantiate(projectilePrefab);
+            projectileToSpawn.SetActive(false);
+            projectileToSpawn.name = projectilePrefab.name; 
+            return projectileToSpawn;
+        }
+
+        public void LaunchProjectile(Transform rightHand, Transform leftHand, Health target)
+        {
+            GameObject projectileInstance = PoolDictionary.pools[projectile.name].GetInstance();
+            projectileInstance.transform.position = GetTransform(rightHand,leftHand).position;
+            projectileInstance.transform.rotation = Quaternion.identity;
+            projectileInstance.GetComponent<Projectile>().SetTarget(target, weaponDamage);
+            projectileInstance.SetActive(true);
+            
+            //Projectile projectileInstance = Instantiate(projectileInstance, GetTransform(rightHand,leftHand).position, Quaternion.identity);
+            //projectileInstance.SetTarget(target, weaponDamage);
+        }
+
+
     }    
 }
 

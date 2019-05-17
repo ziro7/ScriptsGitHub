@@ -70,6 +70,7 @@ namespace RPG.Combat
 
         private GameObject SpawnMethod(){
             GameObject objectToSpawn = Instantiate(minionToSpawn);
+            objectToSpawn.name = minionToSpawn.name;
             objectToSpawn.SetActive(false);
             return objectToSpawn;
         }

@@ -81,8 +81,19 @@ namespace RPG.Combat
         {
             if (target != null)
             {
-                target.TakeDamage(currentWeapon.WeaponDamage);
+                if(currentWeapon.HasProjectile())
+                {
+                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target);
+                } else
+                {
+                    target.TakeDamage(currentWeapon.WeaponDamage);
+                }
             }
+        }
+
+        // Anitmation event on ranged attack - Hit is the melee version - for now they do the same thing.
+        void Shoot(){
+            Hit();
         }
 
 

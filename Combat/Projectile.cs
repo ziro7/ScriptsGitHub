@@ -28,6 +28,12 @@ namespace RPG.Combat
                 transform.LookAt(GetAimLocation());
             }
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
+
+            if (GetComponentInChildren<ParticleSystem>() != null && !GetComponentInChildren<ParticleSystem>().IsAlive())
+            {
+                gameObject.SetActive(false);
+                ((QueuePool<GameObject>)PoolDictionary.pools[this.name]).ReturnInstanceToPool(gameObject);
+            }
         }
 
         public void SetTarget(Health target, float damage){

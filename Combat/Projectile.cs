@@ -10,6 +10,9 @@ namespace RPG.Combat
     {
         [SerializeField] float speed = 1;
         [SerializeField] bool isHoming = true;
+        [SerializeField] GameObject hitEffect = null;
+        [SerializeField] float maxLifeTime = 10;
+
         Health target = null;
         float damage = 0;
 
@@ -30,8 +33,14 @@ namespace RPG.Combat
         public void SetTarget(Health target, float damage){
             this.target = target;
             this.damage = damage;
+            //Destroy(gameObject, maxLifeTime);
+            
+            // Destroy instead of return to pool - Find a way to know when to return if possible.
+            // Currently a Destroy will remove all instances from the pool.
+            // without having it in update. Most projectile will hit, so not as impactfull.
+            // A collider around the world maybe
         }
-       
+
         private Vector3 GetAimLocation()
         {
             CapsuleCollider targetCapsule = target.GetComponent<CapsuleCollider>();
@@ -41,19 +50,47 @@ namespace RPG.Combat
             return target.transform.position + Vector3.up * targetCapsule.height / 2;
         } 
 
-        private void OnTriggerEnter(Collider other) 
+        private void OnTriggerEnter(Collider other)
         {
-            if(other.GetComponent<Health>() != target){
+            if (other.GetComponent<Health>() != target)
+            {
                 return;
             }
-            if(target.IsDead()){
+            if (target.IsDead())
+            {
                 return;
-            }    
+            }
             target.TakeDamage(damage);
+
+            HitEffect();
 
             gameObject.SetActive(false);
             // PoolDictionary takes an Interface, so have to case to specific queue type to call method.
             ((QueuePool<GameObject>)PoolDictionary.pools[this.name]).ReturnInstanceToPool(gameObject);
+        }
+
+        private void HitEffect()
+        {
+            if (hitEffect != null)
+            {
+                if (!PoolDictionary.pools.ContainsKey(hitEffect.name))
+                {
+                    PoolDictionary.AddPool(hitEffect.name, () => SpawnHitEffekt(), 3);
+                }
+
+                GameObject projectileInstance = PoolDictionary.pools[hitEffect.name].GetInstance();
+                projectileInstance.transform.position = GetAimLocation();
+                projectileInstance.transform.rotation = transform.rotation;
+                projectileInstance.SetActive(true);
+            }
+        }
+
+        private GameObject SpawnHitEffekt()
+        {
+            GameObject hitEffektToSpawn = Instantiate(hitEffect);
+            hitEffektToSpawn.SetActive(false);
+            hitEffektToSpawn.name = hitEffect.name;
+            return hitEffektToSpawn;
         }
     }
 }

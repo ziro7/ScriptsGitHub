@@ -88,9 +88,6 @@ namespace RPG.Combat
             projectileInstance.transform.rotation = Quaternion.identity;
             projectileInstance.GetComponent<Projectile>().SetTarget(target, weaponDamage);
             projectileInstance.SetActive(true);
-            
-            //Projectile projectileInstance = Instantiate(projectileInstance, GetTransform(rightHand,leftHand).position, Quaternion.identity);
-            //projectileInstance.SetTarget(target, weaponDamage);
         }
 
 

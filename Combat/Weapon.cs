@@ -33,9 +33,22 @@ namespace RPG.Combat
                 weapon.name = weaponName;
             }
 
+            // Cast the current animatorcontroller as default controller on parent gameObject
+            // If cast is succesfull it means that it is the parent
+            // If unsucessful it returns null and means it is "just" a overrideController set by another weapon. 
+            var overrideController = animator.runtimeAnimatorController as AnimatorOverrideController;
+            // checks if the animatorOverride have been set on weapon.
             if (animatorOverride != null)
             {
+                // sets the default controller to use the override controller.
                 animator.runtimeAnimatorController = animatorOverride;
+            } 
+            // If there is not a override controller on weapon and the cast was succesfull.
+            else if (overrideController != null) 
+            {
+                // we set the controller to the default on the parent.
+                animator.runtimeAnimatorController = overrideController.runtimeAnimatorController;
+                // If we didn't do this the animation would display animation from last weapon.
             }
         }
 

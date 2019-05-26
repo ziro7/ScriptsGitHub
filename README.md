@@ -13,3 +13,6 @@ You are welcome to copy from the scripts if you find them interessting.
 
 Best regards
 Jacob.
+
+#Update 26-05-2019
+Working on enviroment and changing some setting on camera to make it feel more like diablo

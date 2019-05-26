@@ -1,3 +1,4 @@
+using System;
 using RPG.Saving;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ namespace RPG.Core
         [SerializeField] float healthPoints = 100f;
         private bool isDead = false;
 
+        public event Action OnDamageTaken;
+
         public bool IsDead(){
             return isDead;
         }
@@ -19,6 +22,10 @@ namespace RPG.Core
             {
                 Die();
             }
+            // checking if the event is null before triggering.
+            if(OnDamageTaken!=null){
+                OnDamageTaken();
+            } 
         }
 
         public void ReturnToFullHealth(){

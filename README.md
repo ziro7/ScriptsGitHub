@@ -11,8 +11,16 @@ It is not expected to be published at any point, but will be where I have fun tr
 
 You are welcome to copy from the scripts if you find them interessting.
 
+Trello board: https://trello.com/b/PKLHA1l1/rpg
+
 Best regards
 Jacob.
 
+#Update 27-05-2019
+Finished the enviroment for now and placed all enemies in 1/2. 
+Started working on new AI logic to engage when attacked - but small bug to finish.
+
+
 #Update 26-05-2019
 Working on enviroment and changing some setting on camera to make it feel more like diablo
+

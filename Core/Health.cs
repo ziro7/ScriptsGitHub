@@ -40,7 +40,6 @@ namespace RPG.Core
                 return;
             }
             isDead = true;
-            Debug.Log("is this called? - Health: " + healthPoints + " isdead: " + isDead);
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }

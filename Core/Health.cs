@@ -18,14 +18,16 @@ namespace RPG.Core
 
         public void TakeDamage(float damage){
             healthPoints = Mathf.Max(healthPoints - damage, 0);
-            if (healthPoints == 0)
+            if (healthPoints <= 0)
             {
                 Die();
             }
+            
             // checking if the event is null before triggering.
             if(OnDamageTaken!=null){
                 OnDamageTaken();
             } 
+            
         }
 
         public void ReturnToFullHealth(){
@@ -38,6 +40,7 @@ namespace RPG.Core
                 return;
             }
             isDead = true;
+            Debug.Log("is this called? - Health: " + healthPoints + " isdead: " + isDead);
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }

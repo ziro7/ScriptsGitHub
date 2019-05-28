@@ -13,7 +13,7 @@ namespace RPG.Movement
         [SerializeField] float maxSpeed = 6f;
         NavMeshAgent NavMeshAgent;
         Health health;
-        // Update is called once per frame
+
         private void Start() {
             NavMeshAgent = GetComponent<NavMeshAgent>();
             health = GetComponent<Health>();
@@ -33,13 +33,21 @@ namespace RPG.Movement
 
         public void MoveTo(Vector3 destination, float speedPercentage = 1)
         {
-            NavMeshAgent.destination = destination;
-            NavMeshAgent.speed = maxSpeed * Mathf.Clamp01(speedPercentage);
-            NavMeshAgent.isStopped = false;
+            if (NavMeshAgent.isActiveAndEnabled){
+                NavMeshAgent.destination = destination;
+                NavMeshAgent.speed = maxSpeed * Mathf.Clamp01(speedPercentage);
+                NavMeshAgent.isStopped = false;
+            } else
+            {
+                Debug.Log("NavmeshAgent is not active and enabled: " + this.name);
+            }
+
         }
 
         public void Cancel(){
-            NavMeshAgent.isStopped = true;
+            if(NavMeshAgent.isActiveAndEnabled){
+                NavMeshAgent.isStopped = true;
+            }
         }
 
         private void UpdateAnimator()

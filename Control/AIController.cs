@@ -1,17 +1,18 @@
 using System;
+using System.Collections;
 using RPG.Combat;
 using RPG.Core;
 using RPG.Movement;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace RPG.Control
 {
     public class AIController : MonoBehaviour
     {
         [SerializeField] float chaseDistance = 30f;
-        [SerializeField] float aggroDistance = 15f;
-        [SerializeField] Vector3 chaseOrigin;
-        [SerializeField] float suspicionTime = 3f;
+        [SerializeField] float suspicionTime = 1f;
+        [SerializeField] float attackedTimeToNeautral = 3f;
         [SerializeField] PatrolPath patrolPath = null;
         [SerializeField] float waypointTolerance = 1f;
         [SerializeField] float waypointDwellTime = 2f;
@@ -26,39 +27,16 @@ namespace RPG.Control
         Vector3 guardPosition;
         float timeSinceLastSawPlayer = Mathf.Infinity;
         float timeSinceArrivedAtWaypoint = Mathf.Infinity;
+        float timeSinceAttacked = Mathf.Infinity;
         int currentWaypointIndex = 0;
-        bool isAttacking = false;
-        
-        private void Awake() {
+
+        private void Start() {
             fighter = GetComponent<Fighter>();
             health = GetComponent<Health>();
             mover = GetComponent<Mover>();
             player = GameObject.FindWithTag("Player");
-        }
-
-        private void Start() {
             guardPosition = transform.position;
-            SetChaseOrigin();
             health.OnDamageTaken+=DamageTakenHandler;
-        }
-
-        private void DamageTakenHandler()
-        {
-            if (fighter.CanAttack(player) && !isAttacking)
-            {
-                timeSinceLastSawPlayer = 0;
-                AttackBehavior();
-            }
-        }
-
-        private void SetChaseOrigin()
-        {
-            if(patrolPath != null){
-                chaseOrigin=patrolPath.GetWaypoint(0);
-            } else
-            {
-                chaseOrigin=transform.position;
-            }
         }
 
         private void Update()
@@ -66,11 +44,9 @@ namespace RPG.Control
             if (health.IsDead())
             {
                 return;
-            }
-
-            if (InAttackRangeOfPlayer() && fighter.CanAttack(player))
+            } 
+            else if (InAttackRangeOfPlayer() && fighter.CanAttack(player))
             {
-                timeSinceLastSawPlayer = 0;
                 AttackBehavior();
             }
             else if (timeSinceLastSawPlayer < suspicionTime)
@@ -84,15 +60,21 @@ namespace RPG.Control
             UpdateTimers();
         }
 
+        private void DamageTakenHandler()
+        {
+            timeSinceAttacked = 0;
+            AttackBehavior();
+        }
+
         private void UpdateTimers()
         {
             timeSinceLastSawPlayer += Time.deltaTime;
             timeSinceArrivedAtWaypoint += Time.deltaTime;
+            timeSinceAttacked += Time.deltaTime;
         }
 
         private void PatrolBehavior()
         {
-            isAttacking = false;
             Vector3 nextPosition = guardPosition;
             if(patrolPath != null)
             {
@@ -129,26 +111,28 @@ namespace RPG.Control
         private void SuspicionBehavior()
         {
             GetComponent<ActionScheduler>().CancelCurrentAction();
-            isAttacking=false;
         }
 
         private void AttackBehavior()
         {
-            isAttacking=true;
+            timeSinceLastSawPlayer = 0;
             fighter.Attack(player);
         }
 
         private bool InAttackRangeOfPlayer()
         {
+            // When attacked we are allways in range.
+            if(timeSinceAttacked<attackedTimeToNeautral){
+                return true;
+            }
             float distanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
-            return distanceToPlayer<aggroDistance;
+            return distanceToPlayer < chaseDistance;
         }
 
         // Called by unity
         private void OnDrawGizmosSelected() {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(transform.position, chaseDistance);
-            Gizmos.DrawWireSphere(transform.position, aggroDistance);
         } 
     }
 }

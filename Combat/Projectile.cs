@@ -8,16 +8,19 @@ namespace RPG.Combat
 {
     public class Projectile : MonoBehaviour
     {
-        [SerializeField] float speed = 1;
+        [SerializeField] float speed = 1f;
+        [SerializeField] float maxRange = 30f;
         [SerializeField] bool isHoming = true;
         [SerializeField] GameObject hitEffect = null;
-        // [SerializeField] float maxLifeTime = 2;
 
+        GameObject player;
         Health target = null;
+
         float damage = 0;
 
         private void Start() {
             transform.LookAt(GetAimLocation());
+            player = GameObject.FindGameObjectWithTag("Player");
         }
         
         void Update()
@@ -29,22 +32,22 @@ namespace RPG.Combat
             }
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
 
-            if (GetComponentInChildren<ParticleSystem>() != null && !GetComponentInChildren<ParticleSystem>().IsAlive())
+            if (IsOutOfRange())
             {
                 gameObject.SetActive(false);
                 ((QueuePool<GameObject>)PoolDictionary.pools[this.name]).ReturnInstanceToPool(gameObject);
-            }
+            } 
+        }
+
+        private bool IsOutOfRange()
+        {
+            float distanceToPlayer = Vector3.Distance(player.transform.position, transform.position);
+            return distanceToPlayer > maxRange;
         }
 
         public void SetTarget(Health target, float damage){
             this.target = target;
             this.damage = damage;
-            //Destroy(gameObject, maxLifeTime);
-            
-            // Destroy instead of return to pool - Find a way to know when to return if possible.
-            // Currently a Destroy will remove all instances from the pool.
-            // without having it in update. Most projectile will hit, so not as impactfull.
-            // A collider around the world maybe
         }
 
         private Vector3 GetAimLocation()
@@ -71,6 +74,7 @@ namespace RPG.Combat
             HitEffect();
 
             gameObject.SetActive(false);
+            
             // PoolDictionary takes an Interface, so have to case to specific queue type to call method.
             ((QueuePool<GameObject>)PoolDictionary.pools[this.name]).ReturnInstanceToPool(gameObject);
         }

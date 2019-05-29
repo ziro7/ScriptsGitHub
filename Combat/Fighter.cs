@@ -88,7 +88,18 @@ namespace RPG.Combat
                 } else
                 {
                     target.TakeDamage(currentWeapon.WeaponDamage);
+                    if(GetComponentInChildren<ParticleSystem>()!=null){
+                        GetComponentInChildren<ParticleSystem>().Play();
+                    }
                 }
+            }
+        }
+
+        void HitOver()
+        {
+            if (GetComponentInChildren<ParticleSystem>() != null)
+            {
+                GetComponentInChildren<ParticleSystem>().Stop();
             }
         }
 

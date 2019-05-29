@@ -16,6 +16,9 @@ Trello board: https://trello.com/b/PKLHA1l1/rpg
 Best regards
 Jacob.
 
+#Update 28-05-2019
+Mosly bug fixes, but the AI will now engage when hit and there is particle effekt on pickups.
+
 #Update 27-05-2019
 Finished the enviroment for now and placed all enemies in 1/2. 
 Started working on new AI logic to engage when attacked - but small bug to finish.

@@ -16,6 +16,9 @@ Trello board: https://trello.com/b/PKLHA1l1/rpg
 Best regards
 Jacob.
 
+#Update 30-05-2019
+Working on progression system
+
 #Update 28-05-2019
 Mosly bug fixes, but the AI will now engage when hit and there is particle effekt on pickups.
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using RPG.Core;
+using RPG.Resources;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -59,7 +60,7 @@ namespace RPG.Combat
                     int spawnLocation = random.Next(0, spawnPoints.Count);
                     spawn.transform.position = spawnPoints[spawnLocation].transform.position;
                     spawn.transform.rotation = spawnPoints[spawnLocation].transform.rotation;
-                    spawn.GetComponent<Health>().ReturnToFullHealth();
+                    spawn.GetComponent<Health>().GetFullHealth();
                     spawn.SetActive(true);
                     spawn.GetComponent<Fighter>().Attack(player);
                     spawns.Add(spawn);

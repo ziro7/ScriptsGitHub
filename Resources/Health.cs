@@ -1,6 +1,8 @@
 using System;
+using RPG.Control;
 using RPG.Core;
 using RPG.Saving;
+using RPG.SceneManagement;
 using RPG.Stats;
 using UnityEngine;
 
@@ -11,7 +13,10 @@ namespace RPG.Resources
         [SerializeField] float healthPoints;
         private bool isDead = false;
 
+        public delegate void DestinationIdentifer (RPG.SceneManagement.DestinationIdentifer[] destinationIdentifers, BossBehavior bossbehavior);
+
         public event Action OnDamageTaken;
+        public event DestinationIdentifer OnBossDeath;
 
         private void Start() {
             GetFullHealth();
@@ -46,6 +51,15 @@ namespace RPG.Resources
             isDead = true;
             GetComponent<Animator>().SetTrigger("die");
             GetComponent<ActionScheduler>().CancelCurrentAction();
+            
+            // Enables portals if a boss is killed
+            var isABoss = GetComponent<BossBehavior>();
+            if(isABoss !=null && isABoss.PortalsToEnable != null){
+                if (OnDamageTaken != null)
+                {
+                    OnBossDeath(isABoss.PortalsToEnable, isABoss);
+                }
+            }
         }
 
         public object CaptureState()

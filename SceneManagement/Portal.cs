@@ -3,36 +3,43 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using RPG.Saving;
+using RPG.Resources;
 using UnityEngine.AI;
+using RPG.Control;
 
 namespace RPG.SceneManagement
 {
     public class Portal : MonoBehaviour
     {
-
-        enum DestinationIdentifer
-        {
-            Home1 = 0,
-            Home2 = 1,
-            Home3 = 2,
-            HomeBase = 3,
-            OrcMountainStart = 4,
-            OrcMountainEnd = 5,
-            OrcStrongholdStart = 6,
-            OrcStrongholdEnd = 7,
-            CaveStart = 8,
-            CaveEnd = 9
-        }
-
         [SerializeField] int sceneToLoad = -1;
         [SerializeField] Transform spawnPoint;
-        [SerializeField] DestinationIdentifer destination;
-        [SerializeField] DestinationIdentifer location;
+        [SerializeField] DestinationIdentifer destination = DestinationIdentifer.HomeBase;
+        [SerializeField] DestinationIdentifer location= DestinationIdentifer.HomeBase;
         [SerializeField] float fadeOutTime = 0.5f;
         [SerializeField] float fadeInTime = 0.8f;
         [SerializeField] float fadeWaitTime= 0.5f;
+        [SerializeField] bool isEnabled = false;
 
-        
+        private void Start()
+        {
+            var possibleBosses = FindObjectOfType<BossBehavior>();
+            if (possibleBosses != null)
+            {
+                possibleBosses.GetComponent<Health>().OnBossDeath += PortalEnablerHandler;
+            }
+            EnablePortal();
+        }
+
+        private void EnablePortal()
+        {
+            if (!isEnabled)
+            {
+                GetComponent<Collider>().enabled = false;
+            } else {
+                GetComponent<Collider>().enabled = true;
+            }
+        }
+
         private void OnTriggerEnter(Collider other) 
         {
             if(other.tag =="Player")
@@ -91,6 +98,24 @@ namespace RPG.SceneManagement
             } 
 
             return null;
+        }
+
+        public void PortalEnablerHandler(DestinationIdentifer[] portalsToEnable, BossBehavior bossBehavior)
+        {
+            foreach (DestinationIdentifer destinationIdentifer in portalsToEnable)
+            {
+                Debug.Log("portal in destinationIdentifer: " + destinationIdentifer);
+                foreach (Portal portal in FindObjectsOfType<Portal>())
+                {
+                    Debug.Log("portal in findObjects: " + portal.name);
+                    if (destinationIdentifer == portal.location)
+                    {
+                        portal.isEnabled=true;
+                        portal.EnablePortal();
+                        Debug.Log("portal enabled: " + portal.name);
+                    }
+                }
+            }
         }
     }
 }

@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using RPG.Combat;
 using RPG.Core;
 using RPG.Resources;
+using RPG.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace RPG.Combat
+namespace RPG.Control
 {
     public class BossBehavior : MonoBehaviour
     {
@@ -14,10 +16,13 @@ namespace RPG.Combat
         [SerializeField] float waitForSpawns = 5f;
         [SerializeField] int amountToSpawn = 5;
         [SerializeField] List<GameObject> spawnPoints;
+        [SerializeField] DestinationIdentifer[] portalsToEnable = null;
         List<GameObject> spawns = new List<GameObject>();  
         int poolCapacity = 15; 
         GameObject player;
         bool isEngaged = false;
+
+        public DestinationIdentifer[] PortalsToEnable { get => portalsToEnable; private set => portalsToEnable = value; }
 
         private void Awake() 
         {

@@ -16,13 +16,15 @@ namespace RPG.Control
         [SerializeField] float waitForSpawns = 5f;
         [SerializeField] int amountToSpawn = 5;
         [SerializeField] List<GameObject> spawnPoints;
-        [SerializeField] DestinationIdentifer[] portalsToEnable = null;
+        [SerializeField] DestinationIdentifer[] portalsToEnableInScene = null;
+        [SerializeField] DestinationIdentifer[] portalsToEnableInOtherScenes = null;
         List<GameObject> spawns = new List<GameObject>();  
         int poolCapacity = 15; 
         GameObject player;
         bool isEngaged = false;
 
-        public DestinationIdentifer[] PortalsToEnable { get => portalsToEnable; private set => portalsToEnable = value; }
+        public DestinationIdentifer[] PortalsToEnable { get => portalsToEnableInOtherScenes; private set => portalsToEnableInOtherScenes = value; }
+        public DestinationIdentifer[] PortalsToEnableInOtherScenes { get => portalsToEnableInOtherScenes; set => portalsToEnableInOtherScenes = value; }
 
         private void Awake() 
         {

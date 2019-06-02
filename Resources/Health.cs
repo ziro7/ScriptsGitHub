@@ -13,7 +13,7 @@ namespace RPG.Resources
         [SerializeField] float healthPoints;
         private bool isDead = false;
 
-        public delegate void DestinationIdentifer (RPG.SceneManagement.DestinationIdentifer[] destinationIdentifers, BossBehavior bossbehavior);
+        public delegate void DestinationIdentifer (RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersInScene, RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersOutOfScene);
 
         public event Action OnDamageTaken;
         public event DestinationIdentifer OnBossDeath;
@@ -57,7 +57,7 @@ namespace RPG.Resources
             if(isABoss !=null && isABoss.PortalsToEnable != null){
                 if (OnDamageTaken != null)
                 {
-                    OnBossDeath(isABoss.PortalsToEnable, isABoss);
+                    OnBossDeath(isABoss.PortalsToEnable, isABoss.PortalsToEnableInOtherScenes);
                 }
             }
         }

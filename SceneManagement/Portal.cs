@@ -22,6 +22,9 @@ namespace RPG.SceneManagement
 
         private void Start()
         {
+            if(!PortalsEnabler.PortalsEnabled.ContainsKey(location)){
+                PortalsEnabler.PortalsEnabled.Add(location,isEnabled);
+            }
             var possibleBosses = FindObjectOfType<BossBehavior>();
             if (possibleBosses != null)
             {
@@ -74,9 +77,18 @@ namespace RPG.SceneManagement
             savingWrapper.Save();
 
             yield return new WaitForSeconds(fadeWaitTime);
+            UpdatePortalsIfEnabled();
             yield return fader.FadeIn(fadeInTime);
 
             Destroy(gameObject);   
+        }
+
+        private void UpdatePortalsIfEnabled()
+        {
+            foreach (Portal portal in FindObjectsOfType<Portal>())
+            {
+                portal.isEnabled=PortalsEnabler.PortalsEnabled[portal.location];
+            }
         }
 
         private void UpdatePlayer(Portal otherPortal)
@@ -100,21 +112,23 @@ namespace RPG.SceneManagement
             return null;
         }
 
-        public void PortalEnablerHandler(DestinationIdentifer[] portalsToEnable, BossBehavior bossBehavior)
+        public void PortalEnablerHandler(DestinationIdentifer[] portalsToEnableInScene, DestinationIdentifer[] portalsToEnableOutOfScene )
         {
-            foreach (DestinationIdentifer destinationIdentifer in portalsToEnable)
+            foreach (DestinationIdentifer destinationIdentifer in portalsToEnableInScene)
             {
-                Debug.Log("portal in destinationIdentifer: " + destinationIdentifer);
                 foreach (Portal portal in FindObjectsOfType<Portal>())
                 {
-                    Debug.Log("portal in findObjects: " + portal.name);
                     if (destinationIdentifer == portal.location)
                     {
                         portal.isEnabled=true;
                         portal.EnablePortal();
-                        Debug.Log("portal enabled: " + portal.name);
+                        PortalsEnabler.PortalsEnabled[portal.location]=true;
                     }
                 }
+            }
+            foreach (DestinationIdentifer destinationIdentifer in portalsToEnableOutOfScene)
+            {
+                PortalsEnabler.PortalsEnabled[destinationIdentifer]=true;
             }
         }
     }

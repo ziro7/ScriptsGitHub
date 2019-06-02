@@ -23,7 +23,7 @@ namespace RPG.Control
         GameObject player;
         bool isEngaged = false;
 
-        public DestinationIdentifer[] PortalsToEnable { get => portalsToEnableInOtherScenes; private set => portalsToEnableInOtherScenes = value; }
+        public DestinationIdentifer[] PortalsToEnableInScene { get => portalsToEnableInScene; private set => portalsToEnableInScene = value; }
         public DestinationIdentifer[] PortalsToEnableInOtherScenes { get => portalsToEnableInOtherScenes; set => portalsToEnableInOtherScenes = value; }
 
         private void Awake() 

@@ -54,10 +54,10 @@ namespace RPG.Resources
             
             // Enables portals if a boss is killed
             var isABoss = GetComponent<BossBehavior>();
-            if(isABoss !=null && isABoss.PortalsToEnable != null){
+            if(isABoss !=null && isABoss.PortalsToEnableInScene != null){
                 if (OnDamageTaken != null)
                 {
-                    OnBossDeath(isABoss.PortalsToEnable, isABoss.PortalsToEnableInOtherScenes);
+                    OnBossDeath(isABoss.PortalsToEnableInScene, isABoss.PortalsToEnableInOtherScenes);
                 }
             }
         }

@@ -88,6 +88,7 @@ namespace RPG.SceneManagement
             foreach (Portal portal in FindObjectsOfType<Portal>())
             {
                 portal.isEnabled=PortalsEnabler.PortalsEnabled[portal.location];
+                portal.EnablePortal();
             }
         }
 

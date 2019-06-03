@@ -6,6 +6,7 @@ using RPG.Saving;
 using RPG.Resources;
 using UnityEngine.AI;
 using RPG.Control;
+using System.Collections.Generic;
 
 namespace RPG.SceneManagement
 {
@@ -20,10 +21,12 @@ namespace RPG.SceneManagement
         [SerializeField] float fadeWaitTime= 0.5f;
         [SerializeField] bool isEnabled = false;
 
+        public static Dictionary<DestinationIdentifer, Boolean> PortalsEnabled = new Dictionary<DestinationIdentifer, Boolean>();
+
         private void Start()
         {
-            if(!PortalsEnabler.PortalsEnabled.ContainsKey(location)){
-                PortalsEnabler.PortalsEnabled.Add(location,isEnabled);
+            if(!PortalsEnabled.ContainsKey(location)){
+                PortalsEnabled.Add(location,isEnabled);
             }
             var possibleBosses = FindObjectOfType<BossBehavior>();
             if (possibleBosses != null)
@@ -87,7 +90,7 @@ namespace RPG.SceneManagement
         {
             foreach (Portal portal in FindObjectsOfType<Portal>())
             {
-                portal.isEnabled=PortalsEnabler.PortalsEnabled[portal.location];
+                portal.isEnabled=PortalsEnabled[portal.location];
                 portal.EnablePortal();
             }
         }
@@ -123,13 +126,13 @@ namespace RPG.SceneManagement
                     {
                         portal.isEnabled=true;
                         portal.EnablePortal();
-                        PortalsEnabler.PortalsEnabled[portal.location]=true;
+                        PortalsEnabled[portal.location]=true;
                     }
                 }
             }
             foreach (DestinationIdentifer destinationIdentifer in portalsToEnableOutOfScene)
             {
-                PortalsEnabler.PortalsEnabled[destinationIdentifer]=true;
+                PortalsEnabled[destinationIdentifer]=true;
             }
         }
     }

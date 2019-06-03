@@ -26,11 +26,12 @@ namespace RPG.Resources
             return isDead;
         }
 
-        public void TakeDamage(float damage){
+        public void TakeDamage(GameObject instigator, float damage){
             healthPoints = Mathf.Max(healthPoints - damage, 0);
             if (healthPoints <= 0)
             {
                 Die();
+                AwardPower(instigator);
             }
             
             // checking if the event is null before triggering.
@@ -39,27 +40,15 @@ namespace RPG.Resources
             } 
         }
 
-        public void GetFullHealth(){
-            healthPoints = GetComponent<BaseStats>().GetHealth();
+        public (float, float) GetHealthPoints()
+        {
+            float maxHealth = GetComponent<BaseStats>().GetHealth();
+            var healthAndMaxHealth = (healthPoints,maxHealth);
+            return healthAndMaxHealth; 
         }
 
-        private void Die()
-        {
-            if(isDead){
-                return;
-            }
-            isDead = true;
-            GetComponent<Animator>().SetTrigger("die");
-            GetComponent<ActionScheduler>().CancelCurrentAction();
-            
-            // Enables portals if a boss is killed
-            var isABoss = GetComponent<BossBehavior>();
-            if(isABoss !=null && isABoss.PortalsToEnableInScene != null){
-                if (OnDamageTaken != null)
-                {
-                    OnBossDeath(isABoss.PortalsToEnableInScene, isABoss.PortalsToEnableInOtherScenes);
-                }
-            }
+        public void GetFullHealth(){
+            healthPoints = GetComponent<BaseStats>().GetHealth();
         }
 
         public object CaptureState()
@@ -74,6 +63,37 @@ namespace RPG.Resources
             if(healthPoints<= 0){
                 Die();
             }
+        }
+
+        private void Die()
+        {
+            if (isDead)
+            {
+                return;
+            }
+            isDead = true;
+            GetComponent<Animator>().SetTrigger("die");
+            GetComponent<ActionScheduler>().CancelCurrentAction();
+
+            // Enables portals if a boss is killed
+            var isABoss = GetComponent<BossBehavior>();
+            if (isABoss != null && isABoss.PortalsToEnableInScene != null)
+            {
+                if (OnDamageTaken != null)
+                {
+                    OnBossDeath(isABoss.PortalsToEnableInScene, isABoss.PortalsToEnableInOtherScenes);
+                }
+            }
+        }
+
+        private void AwardPower(GameObject instigator)
+        {
+            Power power = instigator.GetComponent<Power>();
+            if(power == null)
+            {
+                return;
+            }
+            power.GainPower(GetComponent<BaseStats>().GetPowerReward());
         }
     }    
 }

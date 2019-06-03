@@ -77,7 +77,7 @@ namespace RPG.Control
         }
 
         private GameObject SpawnMethod(){
-            GameObject objectToSpawn = Instantiate(minionToSpawn);
+            GameObject objectToSpawn = Instantiate(minionToSpawn,transform.position,transform.rotation);
             objectToSpawn.name = minionToSpawn.name;
             objectToSpawn.SetActive(false);
             return objectToSpawn;

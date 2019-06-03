@@ -81,6 +81,23 @@ namespace RPG.Combat
             weapon.Spawn(rightHandTransform, leftHandTransform, animator);
         }
 
+        public Health GetTarget()
+        {
+            return target;
+        }
+
+        public object CaptureState()
+        {
+            return currentWeapon.name;
+        }
+
+        public void RestoreState(object state)
+        {
+            string weaponName = (string)state;
+            Weapon weapon = UnityEngine.Resources.Load<Weapon>(weaponName);
+            EquipWeapon(weapon);
+        }
+
         // Animation Event (triggered from the animation at the point in the animation that hit the enemy)
         void Hit()
         {
@@ -88,10 +105,10 @@ namespace RPG.Combat
             {
                 if(currentWeapon.HasProjectile())
                 {
-                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target);
+                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target,gameObject);
                 } else
                 {
-                    target.TakeDamage(currentWeapon.WeaponDamage);
+                    target.TakeDamage(gameObject,currentWeapon.WeaponDamage);
                     if(GetComponentInChildren<ParticleSystem>()!=null){
                         GetComponentInChildren<ParticleSystem>().Play();
                     }
@@ -142,17 +159,7 @@ namespace RPG.Combat
             GetComponent<Animator>().SetTrigger("stopAttack");
         }
 
-        public object CaptureState()
-        {
-            return currentWeapon.name;
-        }
 
-        public void RestoreState(object state)
-        {
-            string weaponName = (string)state;
-            Weapon weapon = UnityEngine.Resources.Load<Weapon>(weaponName);
-            EquipWeapon(weapon);
-        }
     }
 }
 

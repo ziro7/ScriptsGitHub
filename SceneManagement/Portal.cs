@@ -41,8 +41,22 @@ namespace RPG.SceneManagement
             if (!isEnabled)
             {
                 GetComponent<Collider>().enabled = false;
+                foreach (Transform child in transform)
+                {
+                    foreach (ParticleSystem particleSystem in GetComponentsInChildren<ParticleSystem>())
+                    {
+                        particleSystem.Stop();
+                    }
+                }
             } else {
                 GetComponent<Collider>().enabled = true;
+                foreach (Transform child in transform)
+                {
+                    foreach (ParticleSystem particleSystem in GetComponentsInChildren<ParticleSystem>())
+                    {
+                        particleSystem.Play();
+                    }
+                }
             }
         }
 

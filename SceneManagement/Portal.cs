@@ -23,17 +23,22 @@ namespace RPG.SceneManagement
 
         public static Dictionary<DestinationIdentifer, Boolean> PortalsEnabled = new Dictionary<DestinationIdentifer, Boolean>();
 
-        private void Start()
-        {
-            if(!PortalsEnabled.ContainsKey(location)){
-                PortalsEnabled.Add(location,isEnabled);
+        private void Awake() {
+            if (!PortalsEnabled.ContainsKey(location))
+            {
+                PortalsEnabled.Add(location, isEnabled);
             }
+            EnablePortal();
+        }
+
+        private void Start()
+        {    
             var possibleBosses = FindObjectOfType<BossBehavior>();
             if (possibleBosses != null)
             {
                 possibleBosses.GetComponent<Health>().OnBossDeath += PortalEnablerHandler;
             }
-            EnablePortal();
+            UpdatePortalsIfEnabled();
         }
 
         private void EnablePortal()
@@ -92,12 +97,11 @@ namespace RPG.SceneManagement
             UpdatePlayer(otherPortal);
 
             savingWrapper.Save();
-
+            
             yield return new WaitForSeconds(fadeWaitTime);
-            UpdatePortalsIfEnabled();
             yield return fader.FadeIn(fadeInTime);
 
-            Destroy(gameObject);   
+            Destroy(gameObject);
         }
 
         private void UpdatePortalsIfEnabled()

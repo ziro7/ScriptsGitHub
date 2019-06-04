@@ -19,7 +19,7 @@ namespace RPG.Combat
 
         public bool IsAttacking { get => isAttacking; private set => isAttacking = value; }
 
-        private void Start() 
+        private void Awake() 
         {
             if(currentWeapon == null){
                 EquipWeapon(defaultWeapon);
@@ -150,7 +150,9 @@ namespace RPG.Combat
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.WeaponRange;
+            Collider targetCollider = target.GetComponent<Collider>();
+            float offset = Mathf.Sqrt(Mathf.Pow(targetCollider.bounds.size.x/2, 2f)+Mathf.Pow(targetCollider.bounds.size.y/2, 2f)); 
+            return Vector3.Distance(transform.position,target.transform.position) < (currentWeapon.WeaponRange + offset);
         }
 
         private void StopAttack()

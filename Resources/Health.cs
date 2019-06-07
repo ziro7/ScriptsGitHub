@@ -42,13 +42,13 @@ namespace RPG.Resources
 
         public (float, float) GetHealthPoints()
         {
-            float maxHealth = GetComponent<BaseStats>().GetHealth();
+            float maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
             var healthAndMaxHealth = (healthPoints,maxHealth);
             return healthAndMaxHealth; 
         }
 
         public void GetFullHealth(){
-            healthPoints = GetComponent<BaseStats>().GetHealth();
+            healthPoints = GetComponent<BaseStats>().GetStat(Stat.Health);
         }
 
         public object CaptureState()
@@ -93,7 +93,7 @@ namespace RPG.Resources
             {
                 return;
             }
-            power.GainPower(GetComponent<BaseStats>().GetPowerReward());
+            power.GainPower(GetComponent<BaseStats>().GetStat(Stat.PowerReward));
         }
     }    
 }

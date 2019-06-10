@@ -2,22 +2,20 @@ using System;
 using RPG.Saving;
 using UnityEngine;
 
-namespace RPG.Resources
+namespace RPG.Stats
 {
     public class Power : MonoBehaviour, ISaveable
     {
         [SerializeField] float powerPoints = 0;
-        private float powerLevel = 1;
 
         public void GainPower(float powerGained)
         {
             powerPoints += powerGained;
         }
 
-        public (float, float) GetLevelAndPoints()
+        public float GetPowerPoints()
         {
-            var levelAndPoints = (powerLevel, powerPoints);
-            return levelAndPoints;
+            return powerPoints;
         }
 
         public object CaptureState()

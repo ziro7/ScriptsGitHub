@@ -10,7 +10,7 @@ namespace RPG.Resources
 {
     public class Health : MonoBehaviour, ISaveable
     {
-        [SerializeField] float healthPoints;
+        float damagePoints = 0f;
         private bool isDead = false;
 
         public delegate void DestinationIdentifer (RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersInScene, RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersOutOfScene);
@@ -18,49 +18,52 @@ namespace RPG.Resources
         public event Action OnDamageTaken;
         public event DestinationIdentifer OnBossDeath;
 
-        private void Start() {
-            GetFullHealth();
-        }
-
         public bool IsDead(){
             return isDead;
         }
 
-        public void TakeDamage(GameObject instigator, float damage){
-            healthPoints = Mathf.Max(healthPoints - damage, 0);
-            if (healthPoints <= 0)
+        public void TakeDamage(GameObject instigator, float damage)
+        {
+            damagePoints += damage;
+            if (ShouldDie())
             {
                 Die();
                 AwardPower(instigator);
             }
-            
+
             // checking if the event is null before triggering.
-            if(OnDamageTaken!=null){
+            if (OnDamageTaken != null)
+            {
                 OnDamageTaken();
-            } 
+            }
+        }
+
+        private bool ShouldDie()
+        {
+            return damagePoints >= GetComponent<BaseStats>().GetStat(Stat.Health);
         }
 
         public (float, float) GetHealthPoints()
         {
             float maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
-            var healthAndMaxHealth = (healthPoints,maxHealth);
+            var healthAndMaxHealth = (maxHealth-damagePoints,maxHealth);
             return healthAndMaxHealth; 
         }
 
         public void GetFullHealth(){
-            healthPoints = GetComponent<BaseStats>().GetStat(Stat.Health);
+            damagePoints = 0f;
         }
 
         public object CaptureState()
         {
-            return healthPoints; //floats are serializable by default.
+            return damagePoints; //floats are serializable by default.
         }
 
         public void RestoreState(object state)
         {
-            healthPoints = (float) state;
+            damagePoints = (float) state;
 
-            if(healthPoints<= 0){
+            if(ShouldDie()){
                 Die();
             }
         }

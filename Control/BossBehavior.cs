@@ -19,7 +19,6 @@ namespace RPG.Control
         [SerializeField] DestinationIdentifer[] portalsToEnableInScene = null;
         [SerializeField] DestinationIdentifer[] portalsToEnableInOtherScenes = null;
         List<GameObject> spawns = new List<GameObject>();  
-        int poolCapacity = 15; 
         GameObject player;
         bool isEngaged = false;
 

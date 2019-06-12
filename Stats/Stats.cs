@@ -2,8 +2,16 @@ namespace RPG.Stats
 {
     public enum Stat
     {
-        Health,
+        BaseHealth,
         PowerReward,
-        PowerToLevelUp
+        PowerToLevelUp,
+        Strength,
+        Agility,
+        Stamina,
+        Intellect,
+        Spirit,
+        Armor,
+        CritPercentage,
+        MagicResistance
     }
 }

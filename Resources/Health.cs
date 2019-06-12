@@ -40,12 +40,12 @@ namespace RPG.Resources
 
         private bool ShouldDie()
         {
-            return damagePoints >= GetComponent<BaseStats>().GetStat(Stat.Health);
+            return damagePoints >= GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
         }
 
         public (float, float) GetHealthPoints()
         {
-            float maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
+            float maxHealth = GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
             var healthAndMaxHealth = (maxHealth-damagePoints,maxHealth);
             return healthAndMaxHealth; 
         }

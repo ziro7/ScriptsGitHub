@@ -13,6 +13,7 @@ namespace RPG.Combat
         [SerializeField] float weaponSpeed = 1.1f;
         [SerializeField] float weaponDamage = 5f;
         [SerializeField] bool isRightHanded = true;
+        [SerializeField] bool isMagicAttack = false;
         [SerializeField] Projectile projectile = null;
         [SerializeField] GameObject projectilePrefab = null;
 
@@ -21,6 +22,7 @@ namespace RPG.Combat
         public float WeaponRange { get => weaponRange; private set => weaponRange = value; }
         public float WeaponSpeed { get => weaponSpeed; private set => weaponSpeed = value; }
         public float WeaponDamage { get => weaponDamage; private set => weaponDamage = value; }
+        public bool IsMagicAttack { get => isMagicAttack; set => isMagicAttack = value; }
 
         public void Spawn(Transform rightHand, Transform leftHand, Animator animator)
         {

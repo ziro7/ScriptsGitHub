@@ -10,14 +10,47 @@ namespace RPG.Stats
         [SerializeField] int startingLevel = 1;
         [SerializeField] CharacterClass characterClass;
         [SerializeField] Progression progression = null;
+        [SerializeField] GameObject levelUpParticleEffect = null;
+
+        public event Action OnLevelUp;
+
+        int currentLevel = 0;
+
+        private void Start() {
+            currentLevel = CalculateLevel();
+            Power power = GetComponent<Power>();
+            if(power != null){
+                power.OnPowerGained += PowerGainedHandler;
+            }
+        }
+
+        private void PowerGainedHandler() {
+            int newLevel = CalculateLevel();
+
+            if(newLevel>currentLevel)
+            {
+                currentLevel = newLevel;
+                LevelUpEffect();
+                OnLevelUp();
+            }
+        }
+
+        private void LevelUpEffect()
+        {
+            Instantiate(levelUpParticleEffect, transform);
+        }
 
         public float GetStat(Stat stat)
         {
             return progression.GetStat(stat, characterClass, GetLevel());
         }
 
-        // TO DO move to Power and have a method that is called when a level is gained in order to do particle effekts.
         public int GetLevel()
+        {
+            return currentLevel;
+        }
+
+        public int CalculateLevel()
         {
             Power power = GetComponent<Power>();
 

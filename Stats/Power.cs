@@ -8,9 +8,12 @@ namespace RPG.Stats
     {
         [SerializeField] float powerPoints = 0;
 
+        public event Action OnPowerGained;
+
         public void GainPower(float powerGained)
         {
             powerPoints += powerGained;
+            OnPowerGained();
         }
 
         public float GetPowerPoints()

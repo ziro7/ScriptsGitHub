@@ -18,6 +18,10 @@ namespace RPG.Resources
         public event Action OnDamageTaken;
         public event DestinationIdentifer OnBossDeath;
 
+        private void Start() {
+            GetComponent<BaseStats>().OnLevelUp += GetFullHealth;
+        }
+
         public bool IsDead(){
             return isDead;
         }
@@ -80,7 +84,7 @@ namespace RPG.Resources
 
             // Enables portals if a boss is killed
             var isABoss = GetComponent<BossBehavior>();
-            if (isABoss != null && isABoss.PortalsToEnableInScene != null)
+            if (isABoss != null && (isABoss.PortalsToEnableInScene != null || isABoss.PortalsToEnableInOtherScenes != null ))
             {
                 if (OnDamageTaken != null)
                 {

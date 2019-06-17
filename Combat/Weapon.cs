@@ -11,6 +11,7 @@ namespace RPG.Combat
         [SerializeField] GameObject equippedPrefab = null;
         [SerializeField] float weaponRange = 2f;
         [SerializeField] float weaponSpeed = 1.1f;
+        [Tooltip("WeaponDamage is pr. 1 weaponspeed")]
         [SerializeField] float weaponDamage = 5f;
         [SerializeField] bool isRightHanded = true;
         [SerializeField] bool isMagicAttack = false;

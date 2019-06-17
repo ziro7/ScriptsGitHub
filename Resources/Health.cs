@@ -58,6 +58,11 @@ namespace RPG.Resources
             damagePoints = 0f;
         }
 
+        public void GetHealth(float healthGained)
+        {
+            damagePoints -= Mathf.Min(healthGained,damagePoints);
+        }
+
         public object CaptureState()
         {
             return damagePoints; //floats are serializable by default.

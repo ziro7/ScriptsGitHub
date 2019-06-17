@@ -13,6 +13,7 @@ namespace RPG.Combat
         float attackerCritChange = 0;
         float attackerIntellect = 0;
         float weaponDamage = 0;
+        float weaponSpeed = 0;
 
         // Defender stats
         float defenderLevel = 0;
@@ -31,6 +32,7 @@ namespace RPG.Combat
             attackerLevel = attackerStats.GetLevel();
             attackerCritChange = attackerStats.GetStat(Stat.CritPercentage);
             weaponDamage = weapon.WeaponDamage;
+            weaponSpeed = weapon.WeaponSpeed;
 
             defenderStats = target.GetComponent<BaseStats>();
             defenderLevel = defenderStats.GetLevel();
@@ -65,7 +67,7 @@ namespace RPG.Combat
             float totaldamageBeforeCrit = (damageBeforeMagicResist - damageReductionFromMagicResist) * random.Next(85, 115)/100;
             float critMultiplier = CritMultipler();
 
-            return totaldamageBeforeCrit * critMultiplier;
+            return totaldamageBeforeCrit * critMultiplier * weaponSpeed;
         }
 
         private float CalculateMeleeDamage()
@@ -83,7 +85,7 @@ namespace RPG.Combat
                 float totaldamageBeforeCrit = (damageBeforeArmor - damageReductionFromArmor) * random.Next(85, 115)/100;
                 float critMultiplier = CritMultipler();
 
-                return totaldamageBeforeCrit * critMultiplier;
+                return totaldamageBeforeCrit * critMultiplier * weaponSpeed;
             } else //dodge
             {
                 return 0f;

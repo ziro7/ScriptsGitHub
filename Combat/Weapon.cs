@@ -97,12 +97,12 @@ namespace RPG.Combat
             return projectileToSpawn;
         }
 
-        public void LaunchProjectile(Transform rightHand, Transform leftHand, Health target, GameObject instigator)
+        public void LaunchProjectile(Transform rightHand, Transform leftHand, Health target, GameObject instigator, float damage)
         {
             GameObject projectileInstance = PoolDictionary.pools[projectile.name].GetInstance();
             projectileInstance.transform.position = GetTransform(rightHand,leftHand).position;
             projectileInstance.transform.rotation = Quaternion.identity;
-            projectileInstance.GetComponent<Projectile>().SetTarget(target, instigator, weaponDamage);
+            projectileInstance.GetComponent<Projectile>().SetTarget(target, instigator, damage);
             projectileInstance.SetActive(true);
         }
 

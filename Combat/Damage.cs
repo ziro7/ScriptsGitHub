@@ -7,6 +7,17 @@ namespace RPG.Combat
 {
     public class Damage
     {
+        [SerializeField] float intMultiplier = 1.3f;
+        [SerializeField] float strMultiplier = 1f;
+        [SerializeField] float agiMultiplier = 0.5f;
+        [SerializeField] float armorEffect= 0.1f;
+        [SerializeField] float magicResistEffect = 0.1f;
+        [SerializeField] float hitEqualLevel = 0.95f;
+        [SerializeField] float hitChangePrLevel = 0.05f;
+        [SerializeField] float dodgeFromAgility = 0.5f;
+        [SerializeField] int randomMin = 85f;
+        [SerializeField] int randomMax = 115f;
+
         float attackerLevel = 0;
         float attackerStrength = 0;
         float attackerAgility = 0;
@@ -39,7 +50,7 @@ namespace RPG.Combat
 
             float hitChance = random.Next(1,100);
 
-            if (hitChance <= (95 + 5 * (attackerLevel - defenderLevel)))
+            if (hitChance <= (hitEqualLevel + hitChangePrLevel * (attackerLevel - defenderLevel))) 
             {
                 if (weapon.IsMagicAttack)
                 {
@@ -62,9 +73,9 @@ namespace RPG.Combat
             
             defenderMagicResist = defenderStats.GetStat(Stat.MagicResistance);
 
-            float damageBeforeMagicResist = DamageBeforeMagicResist(); //weaponDamge + 1,3*totalInt
-            float damageReductionFromMagicResist = DamageReductionFromMagicResist();//totalMagicResist/10
-            float totaldamageBeforeCrit = (damageBeforeMagicResist - damageReductionFromMagicResist) * random.Next(85, 115)/100;
+            float damageBeforeMagicResist = weaponDamage + intMultiplier * attackerIntellect;
+            float damageReductionFromMagicResist = defenderMagicResist * magicResistEffect;
+            float totaldamageBeforeCrit = (damageBeforeMagicResist - damageReductionFromMagicResist) * random.Next(randomMin, randomMax)/100;
             float critMultiplier = CritMultipler();
 
             return totaldamageBeforeCrit * critMultiplier * weaponSpeed;
@@ -78,11 +89,11 @@ namespace RPG.Combat
             defenderAgility = defenderStats.GetStat(Stat.Agility);
             defenderArmor = defenderStats.GetStat(Stat.Armor);
 
-            if (random.Next(1, 100) >= defenderAgility / 2)
+            if (random.Next(1, 100) >= defenderAgility / dodgeFromAgility)
             {
-                float damageBeforeArmor = DamageBeforeArmor(); //weaponDamge + 1*totalstr + 0,5*totalagi
-                float damageReductionFromArmor = DamageReductionFromArmor();//totalArmor/10
-                float totaldamageBeforeCrit = (damageBeforeArmor - damageReductionFromArmor) * random.Next(85, 115)/100;
+                float damageBeforeArmor = weaponDamage + strMultiplier * attackerStrength + agiMultiplier * attackerAgility;
+                float damageReductionFromArmor = defenderArmor * armorEffect;
+                float totaldamageBeforeCrit = (damageBeforeArmor - damageReductionFromArmor) * random.Next(randomMin, randomMax)/100;
                 float critMultiplier = CritMultipler();
 
                 return totaldamageBeforeCrit * critMultiplier * weaponSpeed;
@@ -90,26 +101,6 @@ namespace RPG.Combat
             {
                 return 0f;
             }
-        }
-
-        private float DamageBeforeMagicResist()
-        {
-            return weaponDamage + 1.3f * attackerIntellect;
-        }
-
-        private float DamageReductionFromMagicResist()
-        {
-            return defenderMagicResist / 10f;
-        }
-
-        private float DamageBeforeArmor()
-        {
-            return weaponDamage + attackerStrength + 0.5f * attackerAgility;
-        }
-
-        private float DamageReductionFromArmor()
-        {
-            return defenderArmor / 10f;
         }
 
         private float CritMultipler()

@@ -14,6 +14,7 @@ namespace RPG.Combat
 
         Health target = null;
         Weapon currentWeapon = null;
+        Damage damage = null;
         float timeSinceLastAttack = Mathf.Infinity;
         bool isAttacking;
 
@@ -21,6 +22,7 @@ namespace RPG.Combat
 
         private void Awake() 
         {
+            damage = GetComponent<Damage>();
             if(currentWeapon == null){
                 EquipWeapon(defaultWeapon);
             }
@@ -103,12 +105,14 @@ namespace RPG.Combat
         {
             if (target != null)
             {
+                float damageDone = damage.CalculateDamage(this, target, currentWeapon);
+
                 if(currentWeapon.HasProjectile())
                 {
-                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target,gameObject);
+                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target,gameObject, damageDone);
                 } else
                 {
-                    target.TakeDamage(gameObject,currentWeapon.WeaponDamage);
+                    target.TakeDamage(gameObject,damageDone);
                     if(GetComponentInChildren<ParticleSystem>()!=null){
                         GetComponentInChildren<ParticleSystem>().Play();
                     }

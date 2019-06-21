@@ -105,8 +105,6 @@ namespace RPG.Combat
             projectileInstance.GetComponent<Projectile>().SetTarget(target, instigator, damage);
             projectileInstance.SetActive(true);
         }
-
-
     }    
 }
 

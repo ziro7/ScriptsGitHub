@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace RPG.Combat
 {
+    [RequireComponent(typeof(Damage))]
     public class Fighter : MonoBehaviour, IAction, ISaveable
     {
         [SerializeField] Transform leftHandTransform = null;
@@ -105,11 +106,11 @@ namespace RPG.Combat
         {
             if (target != null)
             {
-                float damageDone = damage.CalculateDamage(this, target, currentWeapon);
+                float damageDone = damage.CalculateDamage(this.gameObject, target, currentWeapon);
 
                 if(currentWeapon.HasProjectile())
                 {
-                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target,gameObject, damageDone);
+                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target, gameObject, damageDone);
                 } else
                 {
                     target.TakeDamage(gameObject,damageDone);

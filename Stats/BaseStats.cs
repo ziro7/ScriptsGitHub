@@ -13,14 +13,14 @@ namespace RPG.Stats
         [SerializeField] GameObject levelUpParticleEffect = null;
         [SerializeField] AudioClip levelUpSfx = null;
 
-        AudioSource AudioSource;
+        AudioSource audioSource;
         public event Action OnLevelUp;
 
         int currentLevel = 0;
 
         private void Start() {
 
-            AudioSource = GameObject.FindWithTag("MainCamera").GetComponent<AudioSource>();
+            audioSource = GameObject.FindWithTag("MainCamera").GetComponent<AudioSource>();
 
             currentLevel = CalculateLevel();
             Power power = GetComponent<Power>();
@@ -43,7 +43,7 @@ namespace RPG.Stats
         private void LevelUpEffect()
         {
             Instantiate(levelUpParticleEffect, transform);
-            AudioSource.PlayOneShot(levelUpSfx);
+            audioSource.PlayOneShot(levelUpSfx);
         }
 
         public float GetStat(Stat stat)

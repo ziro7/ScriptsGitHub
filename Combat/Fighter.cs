@@ -16,6 +16,7 @@ namespace RPG.Combat
         Health target = null;
         Weapon currentWeapon = null;
         Damage damage = null;
+        AudioSource audioSource = null;
         float timeSinceLastAttack = Mathf.Infinity;
         bool isAttacking;
 
@@ -27,6 +28,10 @@ namespace RPG.Combat
             if(currentWeapon == null){
                 EquipWeapon(defaultWeapon);
             }
+        }
+
+        private void Start() {
+            audioSource = GameObject.FindWithTag("MainCamera").GetComponent<AudioSource>();
         }
 
         private void Update()
@@ -111,12 +116,17 @@ namespace RPG.Combat
                 if(currentWeapon.HasProjectile())
                 {
                     currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target, gameObject, damageDone);
-                } else
+                } 
+                else
                 {
                     target.TakeDamage(gameObject,damageDone);
                     if(GetComponentInChildren<ParticleSystem>()!=null){
                         GetComponentInChildren<ParticleSystem>().Play();
                     }
+                }
+                if (currentWeapon.SoundEffect != null)
+                {
+                    audioSource.PlayOneShot(currentWeapon.SoundEffect);
                 }
             }
         }

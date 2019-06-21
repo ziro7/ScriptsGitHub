@@ -17,6 +17,7 @@ namespace RPG.Combat
         [SerializeField] bool isMagicAttack = false;
         [SerializeField] Projectile projectile = null;
         [SerializeField] GameObject projectilePrefab = null;
+        [SerializeField] AudioClip soundEffect = null;
 
         const string weaponName = "Weapon"; 
 
@@ -24,6 +25,7 @@ namespace RPG.Combat
         public float WeaponSpeed { get => weaponSpeed; private set => weaponSpeed = value; }
         public float WeaponDamage { get => weaponDamage; private set => weaponDamage = value; }
         public bool IsMagicAttack { get => isMagicAttack; set => isMagicAttack = value; }
+        public AudioClip SoundEffect { get => soundEffect; set => soundEffect = value; }
 
         public void Spawn(Transform rightHand, Transform leftHand, Animator animator)
         {

@@ -178,7 +178,7 @@ namespace RPG.Combat
 
         public IEnumerable<float> GetAdditiveModifer(stat stat)
         {
-            yield return currentWeapon.ModifierDict[stat];
+            yield return currentWeapon.Modifier[(int)stat];
         }
 
     }

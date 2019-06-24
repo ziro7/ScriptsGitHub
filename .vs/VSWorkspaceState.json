@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Combat"
+    "\\Combat",
+    "\\Stats"
   ],
-  "SelectedNode": "\\Combat\\Damage.cs",
+  "SelectedNode": "\\Stats\\BaseStats.cs",
   "PreviewInSolutionExplorer": false
 }

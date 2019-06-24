@@ -7,7 +7,7 @@ using UnityEngine;
 namespace RPG.Combat
 {
     [RequireComponent(typeof(Damage))]
-    public class Fighter : MonoBehaviour, IAction, ISaveable
+    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
     {
         [SerializeField] Transform leftHandTransform = null;
         [SerializeField] Transform rightHandTransform = null;
@@ -176,6 +176,10 @@ namespace RPG.Combat
             GetComponent<Animator>().SetTrigger("stopAttack");
         }
 
+        public IEnumerable<float> GetAdditiveModifer(stat stat)
+        {
+            yield return currentWeapon.ModifierDict[stat];
+        }
 
     }
 }

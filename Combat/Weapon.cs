@@ -13,6 +13,7 @@ namespace RPG.Combat
         [SerializeField] float weaponSpeed = 1.1f;
         [Tooltip("WeaponDamage is pr. 1 weaponspeed")]
         [SerializeField] float weaponDamage = 5f;
+        [SerializeField] Dictionary<Stat, float> modifierDict = new Dictionary<Stat, float>();
         [SerializeField] bool isRightHanded = true;
         [SerializeField] bool isMagicAttack = false;
         [SerializeField] Projectile projectile = null;
@@ -26,6 +27,7 @@ namespace RPG.Combat
         public float WeaponDamage { get => weaponDamage; private set => weaponDamage = value; }
         public bool IsMagicAttack { get => isMagicAttack; set => isMagicAttack = value; }
         public AudioClip SoundEffect { get => soundEffect; set => soundEffect = value; }
+        public Dictionary<Stat, float> ModifierDict { get => modifierDict; set => modifierDict = value; }
 
         public void Spawn(Transform rightHand, Transform leftHand, Animator animator)
         {

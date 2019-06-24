@@ -29,10 +29,35 @@ namespace RPG.Stats
             }
         }
 
-        private void PowerGainedHandler() {
+
+        public float GetStat(Stat stat)
+        {
+            return progression.GetStat(stat, characterClass, GetLevel()) + GetAdditiveModifers(stat);
+        }
+
+        public int GetLevel()
+        {
+            return currentLevel;
+        }
+
+        private float GetAdditiveModifers(Stat stat)
+        {
+            float total = 0;
+            foreach(IModifierProvider provider in GetComponents<IModifierProvider>())
+            {
+                foreach(float modifiers in provider.GetAdditiveModifier(stat))
+                {
+                    total += modifier;
+                }
+            }
+            return total;
+        }
+
+        private void PowerGainedHandler()
+        {
             int newLevel = CalculateLevel();
 
-            if(newLevel>currentLevel)
+            if (newLevel > currentLevel)
             {
                 currentLevel = newLevel;
                 LevelUpEffect();
@@ -46,17 +71,7 @@ namespace RPG.Stats
             audioSource.PlayOneShot(levelUpSfx);
         }
 
-        public float GetStat(Stat stat)
-        {
-            return progression.GetStat(stat, characterClass, GetLevel());
-        }
-
-        public int GetLevel()
-        {
-            return currentLevel;
-        }
-
-        public int CalculateLevel()
+        private int CalculateLevel()
         {
             Power power = GetComponent<Power>();
 

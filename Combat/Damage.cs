@@ -5,18 +5,18 @@ using System;
 
 namespace RPG.Combat
 {
-    public class Damage
+    public class Damage : MonoBehaviour
     {
         [SerializeField] float intMultiplier = 1.3f;
         [SerializeField] float strMultiplier = 1f;
         [SerializeField] float agiMultiplier = 0.5f;
         [SerializeField] float armorEffect= 0.1f;
         [SerializeField] float magicResistEffect = 0.1f;
-        [SerializeField] float hitEqualLevel = 0.95f;
-        [SerializeField] float hitChangePrLevel = 0.05f;
+        [SerializeField] float hitEqualLevel = 95f;
+        [SerializeField] float hitChangePrLevel = 5f;
         [SerializeField] float dodgeFromAgility = 0.5f;
-        [SerializeField] int randomMin = 85f;
-        [SerializeField] int randomMax = 115f;
+        [SerializeField] int randomMin = 85;
+        [SerializeField] int randomMax = 115;
 
         float attackerLevel = 0;
         float attackerStrength = 0;
@@ -49,7 +49,6 @@ namespace RPG.Combat
             defenderLevel = defenderStats.GetLevel();
 
             float hitChance = random.Next(1,100);
-
             if (hitChance <= (hitEqualLevel + hitChangePrLevel * (attackerLevel - defenderLevel))) 
             {
                 if (weapon.IsMagicAttack)
@@ -63,6 +62,7 @@ namespace RPG.Combat
             }
             else //miss
             {
+                Debug.Log("Miss");
                 return 0f;
             }
         }
@@ -93,12 +93,13 @@ namespace RPG.Combat
             {
                 float damageBeforeArmor = weaponDamage + strMultiplier * attackerStrength + agiMultiplier * attackerAgility;
                 float damageReductionFromArmor = defenderArmor * armorEffect;
-                float totaldamageBeforeCrit = (damageBeforeArmor - damageReductionFromArmor) * random.Next(randomMin, randomMax)/100;
+                float totalDamageBeforeCrit = (damageBeforeArmor - damageReductionFromArmor) * random.Next(randomMin, randomMax)/100;
                 float critMultiplier = CritMultipler();
 
-                return totaldamageBeforeCrit * critMultiplier * weaponSpeed;
+                return totalDamageBeforeCrit * critMultiplier * weaponSpeed;
             } else //dodge
             {
+                print("Dodge");
                 return 0f;
             }
         }

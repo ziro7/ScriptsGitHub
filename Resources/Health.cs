@@ -28,6 +28,7 @@ namespace RPG.Resources
 
         public void TakeDamage(GameObject instigator, float damage)
         {
+            print("damage is: " + damage );
             damagePoints += damage;
             if (ShouldDie())
             {

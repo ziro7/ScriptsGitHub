@@ -15,6 +15,8 @@ namespace RPG.Combat
         [SerializeField] float weaponDamage = 5f;
         [Tooltip("BaseHealth,PowerReward,PowerToLevelUp,Strength,Agility,Stamina,Intellect,Spirit,Armor,CritPercentage,MagicResistance")]
         [SerializeField] float[] modifiers = new float[11] {0,0,0,0,0,0,0,0,0,0,0};
+        [Tooltip("BaseHealth,PowerReward,PowerToLevelUp,Strength,Agility,Stamina,Intellect,Spirit,Armor,CritPercentage,MagicResistance")]
+        [SerializeField] float[] modifiersPercent = new float[11] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         [SerializeField] bool isRightHanded = true;
         [SerializeField] bool isMagicAttack = false;
         [SerializeField] Projectile projectile = null;
@@ -29,6 +31,7 @@ namespace RPG.Combat
         public bool IsMagicAttack { get => isMagicAttack; set => isMagicAttack = value; }
         public AudioClip SoundEffect { get => soundEffect; set => soundEffect = value; }
         public float[] Modifiers { get => modifiers; set => modifiers = value; }
+        public float[] ModifiersPercent { get => modifiersPercent; set => modifiersPercent = value; }
 
         public void Spawn(Transform rightHand, Transform leftHand, Animator animator)
         {

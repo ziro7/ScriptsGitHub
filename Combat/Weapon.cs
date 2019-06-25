@@ -1,5 +1,6 @@
 ﻿using RPG.Core;
 using RPG.Resources;
+using RPG.Stats;
 using UnityEngine;
 
 namespace RPG.Combat
@@ -30,8 +31,16 @@ namespace RPG.Combat
         public float WeaponDamage { get => weaponDamage; private set => weaponDamage = value; }
         public bool IsMagicAttack { get => isMagicAttack; set => isMagicAttack = value; }
         public AudioClip SoundEffect { get => soundEffect; set => soundEffect = value; }
-        public float[] Modifiers { get => modifiers; set => modifiers = value; }
-        public float[] ModifiersPercent { get => modifiersPercent; set => modifiersPercent = value; }
+
+        public float Modifiers(Stat stat)
+        {
+            return modifiers[(int)stat];
+        }
+
+        public float ModifiersPercent(Stat stat)
+        {
+            return modifiersPercent[(int)stat];
+        }
 
         public void Spawn(Transform rightHand, Transform leftHand, Animator animator)
         {

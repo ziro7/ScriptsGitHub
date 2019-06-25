@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using RPG.Core;
 using RPG.Movement;
 using RPG.Resources;
 using RPG.Saving;
+using RPG.Stats;
 using UnityEngine;
 
 namespace RPG.Combat
@@ -176,14 +178,14 @@ namespace RPG.Combat
             GetComponent<Animator>().SetTrigger("stopAttack");
         }
 
-        public IEnumerable<float> GetAdditiveModifers(stat stat)
+        public IEnumerable<float> GetAdditiveModifiers(Stat stat)
         {
-            yield return currentWeapon.Modifier[(int)stat];
+            yield return currentWeapon.Modifiers(stat);
         }
 
-        public IEnumerable<float> GetPercentageModifers(stat stat)
+        public IEnumerable<float> GetPercentageModifiers(Stat stat)
         {
-            yield return currentWeapon.ModifierPercent[(int)stat];
+            yield return currentWeapon.ModifiersPercent(stat);
         }
     }
 }

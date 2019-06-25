@@ -11,11 +11,23 @@ namespace RPG.Saving
 {
     public class SavingSystem : MonoBehaviour
     {
+        public IEnumerator LoadLastScene (string saveFile)
+        {
+            Dictionary<string, object> state = LoadFile(saveFile);
+            int buildIndex = SceneManager.GetActiveScene().buildIndex;
+            if (state.ContainsKey("lastSceneBuildIndex"))
+            {
+                buildIndex = (int)state["lastSceneBuildIndex"];
+            }
+            yield return SceneManager.LoadSceneAsync(buildIndex);
+            RestoreState(state);  
+        }
+
         public void Save(string saveFile)
         {
             Dictionary<string, object> state = LoadFile(saveFile); //getting the current loadfile so data will be added instead of replacing
             CaptureState(state);
-            SaveFile(saveFile,state);
+            SaveFile(saveFile, state);
         }
 
         public void Load(string saveFile)
@@ -23,23 +35,25 @@ namespace RPG.Saving
             RestoreState(LoadFile(saveFile));
         }
 
-        public IEnumerator LoadLastScene (string saveFile)
-        {
-            Dictionary<string, object> state = LoadFile(saveFile);
-
-            if (state.ContainsKey("lastSceneBuildIndex")){
-                int buildIndexToRestore = (int)state["lastSceneBuildIndex"];
-                if (buildIndexToRestore != SceneManager.GetActiveScene().buildIndex)
-                {
-                    yield return SceneManager.LoadSceneAsync(buildIndexToRestore);
-                }
-            } 
-            RestoreState(state);
-        }
-
         public void Delete(string saveFile)
         {
             File.Delete(GetPathFromSaveFile(saveFile));
+        }
+
+        private Dictionary<string, object> LoadFile(string saveFile)
+        {
+            string path = GetPathFromSaveFile(saveFile);
+
+            if (!File.Exists(path))
+            {
+                return new Dictionary<string, object>();
+            }
+
+            using (FileStream stream = File.Open(path, FileMode.Open))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                return (Dictionary<string, object>)formatter.Deserialize(stream);
+            }
         }
 
         private void SaveFile(string saveFile, object state)
@@ -49,21 +63,6 @@ namespace RPG.Saving
             {
                 BinaryFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(stream, state);
-            }
-        }
-
-        private Dictionary<string, object> LoadFile(string saveFile)
-        {
-            string path = GetPathFromSaveFile(saveFile);
-
-            if(!File.Exists(path)){
-                return new Dictionary<string, object>();
-            }
-
-            using (FileStream stream = File.Open(path, FileMode.Open))
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                return (Dictionary<string, object>) formatter.Deserialize(stream);
             }
         }
 

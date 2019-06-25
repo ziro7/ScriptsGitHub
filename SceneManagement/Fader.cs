@@ -5,7 +5,6 @@ namespace RPG.SceneManagement
 {
     public class Fader : MonoBehaviour
     {
-
         CanvasGroup canvasGroup;
 
         private void Awake() {
@@ -16,7 +15,6 @@ namespace RPG.SceneManagement
             canvasGroup.alpha = 1;
         }
 
-
         public IEnumerator Fadeout(float time)
         {
             while (canvasGroup.alpha<1){
@@ -24,7 +22,6 @@ namespace RPG.SceneManagement
                 yield return null;
             }
         }
-
 
         public IEnumerator FadeIn(float time)
         {

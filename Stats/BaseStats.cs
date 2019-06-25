@@ -29,7 +29,6 @@ namespace RPG.Stats
             }
         }
 
-
         public float GetStat(Stat stat)
         {
             return (GetBaseStats(stat) + GetAdditiveModifers(stat))* (1+GetPercentageModifiers(stat)/100);

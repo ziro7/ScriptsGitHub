@@ -1,4 +1,5 @@
 using System;
+using RPG.Core;
 using UnityEngine;
 
 namespace RPG.Stats
@@ -14,18 +15,32 @@ namespace RPG.Stats
         [SerializeField] AudioClip levelUpSfx = null;
 
         AudioSource audioSource;
+        Power power;
         public event Action OnLevelUp;
 
-        int currentLevel = 0;
+        LazyValue<int> currentLevel;
 
         private void Awake() {
             audioSource = GameObject.FindWithTag("MainCamera").GetComponent<AudioSource>();
+            currentLevel = new LazyValue<int>(CalculateLevel);
+            power = GetComponent<Power>();
         }
 
         private void Start() {
-            currentLevel = CalculateLevel();
-            Power power = GetComponent<Power>();
-            if(power != null){
+            currentLevel.ForceInit();
+        }
+
+        private void OnEnable() {
+            if (power != null)
+            {
+                power.OnPowerGained += PowerGainedHandler;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (power != null)
+            {
                 power.OnPowerGained += PowerGainedHandler;
             }
         }
@@ -37,7 +52,7 @@ namespace RPG.Stats
 
         public int GetLevel()
         {
-            return currentLevel;
+            return currentLevel.value;
         }
 
         private float GetBaseStats(Stat stat) => progression.GetStat(stat, characterClass, GetLevel());
@@ -72,9 +87,9 @@ namespace RPG.Stats
         {
             int newLevel = CalculateLevel();
 
-            if (newLevel > currentLevel)
+            if (newLevel > currentLevel.value)
             {
-                currentLevel = newLevel;
+                currentLevel.value = newLevel;
                 LevelUpEffect();
                 OnLevelUp();
             }

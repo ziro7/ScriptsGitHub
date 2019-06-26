@@ -22,7 +22,7 @@ namespace RPG.Control
         GameObject player;
         Mover mover;
 
-        Vector3 guardPosition;
+        LazyValue<Vector3> guardPosition;
         float timeSinceLastSawPlayer = Mathf.Infinity;
         float timeSinceArrivedAtWaypoint = Mathf.Infinity;
         float timeSinceAttacked = Mathf.Infinity;
@@ -33,10 +33,16 @@ namespace RPG.Control
             health = GetComponent<Health>();
             mover = GetComponent<Mover>();
             player = GameObject.FindWithTag("Player");
-            guardPosition = transform.position;
+            guardPosition = new LazyValue<Vector3>(GetGuardPosition);
+        }
+
+        private Vector3 GetGuardPosition()
+        {
+            return transform.position;
         }
 
         private void Start() {
+            guardPosition.ForceInit();
             health.OnDamageTaken+=DamageTakenHandler;
         }
 
@@ -76,7 +82,7 @@ namespace RPG.Control
 
         private void PatrolBehavior()
         {
-            Vector3 nextPosition = guardPosition;
+            Vector3 nextPosition = guardPosition.value;
             if(patrolPath != null)
             {
                 if(AtWaypoint())

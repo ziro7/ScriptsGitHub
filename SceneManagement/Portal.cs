@@ -32,7 +32,7 @@ namespace RPG.SceneManagement
         }
 
         private void Start()
-        {    
+        {
             var possibleBosses = FindObjectOfType<BossBehavior>();
             if (possibleBosses != null)
             {

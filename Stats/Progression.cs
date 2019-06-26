@@ -20,7 +20,6 @@ namespace RPG.Stats
             if(levels.Length < level){
                 return 0;
             }
-
             return levels[level-1];  // level start at 1 and array at 0.
         }
 

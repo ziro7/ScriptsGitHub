@@ -18,10 +18,11 @@ namespace RPG.Stats
 
         int currentLevel = 0;
 
-        private void Start() {
-
+        private void Awake() {
             audioSource = GameObject.FindWithTag("MainCamera").GetComponent<AudioSource>();
+        }
 
+        private void Start() {
             currentLevel = CalculateLevel();
             Power power = GetComponent<Power>();
             if(power != null){

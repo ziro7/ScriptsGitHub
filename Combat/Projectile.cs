@@ -20,9 +20,12 @@ namespace RPG.Combat
 
         float damage = 0;
 
+        private void Awake() {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+
         private void Start() {
             transform.LookAt(GetAimLocation());
-            player = GameObject.FindGameObjectWithTag("Player");
         }
         
         void Update()

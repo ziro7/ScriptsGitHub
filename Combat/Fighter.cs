@@ -16,7 +16,7 @@ namespace RPG.Combat
         [SerializeField] Weapon defaultWeapon = null;
 
         Health target = null;
-        Weapon currentWeapon = null;
+        LazyValue<Weapon> currentWeapon;
         Damage damage = null;
         AudioSource audioSource = null;
         float timeSinceLastAttack = Mathf.Infinity;
@@ -26,14 +26,19 @@ namespace RPG.Combat
 
         private void Awake() 
         {
+            audioSource = GameObject.FindWithTag("MainCamera").GetComponent<AudioSource>();
             damage = GetComponent<Damage>();
-            if(currentWeapon == null){
-                EquipWeapon(defaultWeapon);
-            }
+            currentWeapon = new LazyValue<Weapon>(SetupDefaultWeapon);
+        }
+
+        private Weapon SetupDefaultWeapon()
+        {
+            AttachWeapon(defaultWeapon);
+            return defaultWeapon;
         }
 
         private void Start() {
-            audioSource = GameObject.FindWithTag("MainCamera").GetComponent<AudioSource>();
+            currentWeapon.ForceInit();
         }
 
         private void Update()
@@ -86,7 +91,7 @@ namespace RPG.Combat
 
         public void EquipWeapon(Weapon weapon)
         {
-            currentWeapon = weapon;
+            currentWeapon.value = weapon;
             AttachWeapon(weapon);
         }
 
@@ -103,7 +108,7 @@ namespace RPG.Combat
 
         public object CaptureState()
         {
-            return currentWeapon.name;
+            return currentWeapon.value.name;
         }
 
         public void RestoreState(object state)
@@ -118,11 +123,11 @@ namespace RPG.Combat
         {
             if (target != null)
             {
-                float damageDone = damage.CalculateDamage(this.gameObject, target, currentWeapon);
+                float damageDone = damage.CalculateDamage(this.gameObject, target, currentWeapon.value);
 
-                if(currentWeapon.HasProjectile())
+                if(currentWeapon.value.HasProjectile())
                 {
-                    currentWeapon.LaunchProjectile(rightHandTransform,leftHandTransform, target, gameObject, damageDone);
+                    currentWeapon.value.LaunchProjectile(rightHandTransform,leftHandTransform, target, gameObject, damageDone);
                 } 
                 else
                 {
@@ -131,9 +136,9 @@ namespace RPG.Combat
                         GetComponentInChildren<ParticleSystem>().Play();
                     }
                 }
-                if (currentWeapon.SoundEffect != null)
+                if (currentWeapon.value.SoundEffect != null)
                 {
-                    audioSource.PlayOneShot(currentWeapon.SoundEffect);
+                    audioSource.PlayOneShot(currentWeapon.value.SoundEffect);
                 }
             }
         }
@@ -174,7 +179,7 @@ namespace RPG.Combat
         {
             Collider targetCollider = target.GetComponent<Collider>();
             float offset = Mathf.Sqrt(Mathf.Pow(targetCollider.bounds.size.x/2, 2f)+Mathf.Pow(targetCollider.bounds.size.y/2, 2f)); 
-            return Vector3.Distance(transform.position,target.transform.position) < (currentWeapon.WeaponRange + offset);
+            return Vector3.Distance(transform.position,target.transform.position) < (currentWeapon.value.WeaponRange + offset);
         }
 
         private void StopAttack()
@@ -185,12 +190,12 @@ namespace RPG.Combat
 
         public IEnumerable<float> GetAdditiveModifiers(Stat stat)
         {
-            yield return currentWeapon.Modifiers(stat);
+            yield return currentWeapon.value.Modifiers(stat);
         }
 
         public IEnumerable<float> GetPercentageModifiers(Stat stat)
         {
-            yield return currentWeapon.ModifiersPercent(stat);
+            yield return currentWeapon.value.ModifiersPercent(stat);
         }
     }
 }

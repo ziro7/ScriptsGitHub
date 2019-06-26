@@ -10,16 +10,33 @@ namespace RPG.Resources
 {
     public class Health : MonoBehaviour, ISaveable
     {
-        float damagePoints = 0f;
+        LazyValue<float> healthPoints;
         private bool isDead = false;
 
         public delegate void DestinationIdentifer (RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersInScene, RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersOutOfScene);
-
         public event Action OnDamageTaken;
         public event DestinationIdentifer OnBossDeath;
 
+        private void Awake() {
+            healthPoints = new LazyValue<float>(GetIntialHealth);
+        }
+
+        private float GetIntialHealth()
+        {
+            return GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
+        }
+
         private void Start() {
-            GetComponent<BaseStats>().OnLevelUp += GetFullHealth;
+            healthPoints.ForceInit();
+        }
+        
+        private void OnEnable() {
+            GetComponent<BaseStats>().OnLevelUp += RegenerateHealth;
+        }
+
+        private void OnDisable() 
+        {
+            GetComponent<BaseStats>().OnLevelUp += RegenerateHealth;
         }
 
         public bool IsDead(){
@@ -29,8 +46,8 @@ namespace RPG.Resources
         public void TakeDamage(GameObject instigator, float damage)
         {
             print("damage is: " + damage );
-            damagePoints += damage;
-            if (ShouldDie())
+            healthPoints.value = Mathf.Max(healthPoints.value - damage, 0);
+            if (healthPoints.value == 0)
             {
                 Die();
                 AwardPower(instigator);
@@ -43,39 +60,26 @@ namespace RPG.Resources
             }
         }
 
-        private bool ShouldDie()
-        {
-            return damagePoints >= GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
-        }
-
         public (float, float) GetHealthPoints()
         {
             float maxHealth = GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
-            var healthAndMaxHealth = (maxHealth-damagePoints,maxHealth);
+            var healthAndMaxHealth = (maxHealth-healthPoints.value,maxHealth);
             return healthAndMaxHealth; 
-        }
-
-        public void GetFullHealth(){
-            damagePoints = 0f;
         }
 
         public void GetHealth(float healthGained)
         {
-            damagePoints -= Mathf.Min(healthGained,damagePoints);
-        }
-
-        public object CaptureState()
-        {
-            return damagePoints; //floats are serializable by default.
-        }
-
-        public void RestoreState(object state)
-        {
-            damagePoints = (float) state;
-
-            if(ShouldDie()){
-                Die();
+            if(healthGained >= GetComponent<BaseStats>().GetStat(Stat.BaseHealth)){
+                healthPoints.value += GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
+            } else
+            {
+                healthPoints.value += healthGained;
             }
+        }
+
+        public void GetFullHealth()
+        {
+            healthPoints.value = GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
         }
 
         private void Die()
@@ -108,6 +112,27 @@ namespace RPG.Resources
             }
             power.GainPower(GetComponent<BaseStats>().GetStat(Stat.PowerReward));
         }
+
+        private void RegenerateHealth()
+        {
+            healthPoints.value = GetIntialHealth();
+        }
+
+        public object CaptureState()
+        {
+            return healthPoints; //floats are serializable by default.
+        }
+
+        public void RestoreState(object state)
+        {
+            healthPoints.value = (float)state;
+
+            if (healthPoints.value <= 0)
+            {
+                Die();
+            }
+        }
+
     }    
 }
 

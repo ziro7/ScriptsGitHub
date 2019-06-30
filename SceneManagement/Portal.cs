@@ -21,6 +21,8 @@ namespace RPG.SceneManagement
         [SerializeField] float fadeWaitTime= 0.5f;
         [SerializeField] bool isEnabled = false;
 
+        BossBehavior possibleBosses;
+
         public static Dictionary<DestinationIdentifer, Boolean> PortalsEnabled = new Dictionary<DestinationIdentifer, Boolean>();
 
         private void Awake() {
@@ -29,16 +31,26 @@ namespace RPG.SceneManagement
                 PortalsEnabled.Add(location, isEnabled);
             }
             EnablePortal();
+            possibleBosses = FindObjectOfType<BossBehavior>();
         }
 
         private void Start()
-        {
-            var possibleBosses = FindObjectOfType<BossBehavior>();
+        { 
+            UpdatePortalsIfEnabled();
+        }
+
+        private void OnEnable() {
             if (possibleBosses != null)
             {
                 possibleBosses.GetComponent<Health>().OnBossDeath += PortalEnablerHandler;
             }
-            UpdatePortalsIfEnabled();
+        }
+
+        private void OnDisable() {
+            if (possibleBosses != null)
+            {
+                possibleBosses.GetComponent<Health>().OnBossDeath -= PortalEnablerHandler;
+            }
         }
 
         private void EnablePortal()

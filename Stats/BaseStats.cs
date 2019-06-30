@@ -41,7 +41,7 @@ namespace RPG.Stats
         {
             if (power != null)
             {
-                power.OnPowerGained += PowerGainedHandler;
+                power.OnPowerGained -= PowerGainedHandler;
             }
         }
 

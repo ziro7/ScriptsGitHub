@@ -43,7 +43,14 @@ namespace RPG.Control
 
         private void Start() {
             guardPosition.ForceInit();
-            health.OnDamageTaken+=DamageTakenHandler;
+        }
+
+        private void OnEnable() {
+            health.OnDamageTaken += DamageTakenHandler;
+        }
+
+        private void OnDisable() {
+            health.OnDamageTaken -= DamageTakenHandler;
         }
 
         private void Update()

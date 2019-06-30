@@ -22,8 +22,8 @@ namespace RPG.Cinematics
         private void OnDisable()
         {
             //Events in unitys PlayableDirector class (cinematics)
-            GetComponent<PlayableDirector>().played += DisableControl;
-            GetComponent<PlayableDirector>().stopped += EnableControl;
+            GetComponent<PlayableDirector>().played -= DisableControl;
+            GetComponent<PlayableDirector>().stopped -= EnableControl;
         }
 
         void DisableControl(PlayableDirector playableDirector)

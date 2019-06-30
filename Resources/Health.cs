@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace RPG.Resources
 {
+    //[Serializable]
     public class Health : MonoBehaviour, ISaveable
     {
         LazyValue<float> healthPoints;
@@ -45,7 +46,6 @@ namespace RPG.Resources
 
         public void TakeDamage(GameObject instigator, float damage)
         {
-            print("damage is: " + damage );
             healthPoints.value = Mathf.Max(healthPoints.value - damage, 0);
             if (healthPoints.value == 0)
             {
@@ -60,11 +60,13 @@ namespace RPG.Resources
             }
         }
 
-        public (float, float) GetHealthPoints()
+        public float GetCurrentHealthPoints()
         {
-            float maxHealth = GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
-            var healthAndMaxHealth = (maxHealth-healthPoints.value,maxHealth);
-            return healthAndMaxHealth; 
+            return healthPoints.value; 
+        }
+
+        public float GetMaxHealthPoints(){
+            return GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
         }
 
         public void GetHealth(float healthGained)

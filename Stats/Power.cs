@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace RPG.Stats
 {
+    //[Serializable]
     public class Power : MonoBehaviour, ISaveable
     {
         [SerializeField] float powerPoints = 0;

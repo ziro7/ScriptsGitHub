@@ -1,4 +1,5 @@
-﻿using RPG.Core;
+﻿using System;
+using RPG.Core;
 using RPG.Resources;
 using RPG.Stats;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 namespace RPG.Combat
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/Make New Weapon", order = 0)]
+    //[Serializable]
     public class Weapon : ScriptableObject
     {
         [SerializeField] AnimatorOverrideController animatorOverride = null;
@@ -14,10 +16,12 @@ namespace RPG.Combat
         [SerializeField] float weaponSpeed = 1.1f;
         [Tooltip("WeaponDamage is pr. 1 weaponspeed")]
         [SerializeField] float weaponDamage = 5f;
-        [Tooltip("BaseHealth,PowerReward,PowerToLevelUp,Strength,Agility,Stamina,Intellect,Spirit,Armor,CritPercentage,MagicResistance")]
-        [SerializeField] float[] modifiers = new float[11] {0,0,0,0,0,0,0,0,0,0,0};
-        [Tooltip("BaseHealth,PowerReward,PowerToLevelUp,Strength,Agility,Stamina,Intellect,Spirit,Armor,CritPercentage,MagicResistance")]
-        [SerializeField] float[] modifiersPercent = new float[11] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        //[Tooltip("BaseHealth,PowerReward,PowerToLevelUp,Strength,Agility,Stamina,Intellect,Spirit,Armor,CritPercentage,MagicResistance")]
+        //[SerializeField] float[] modifiers = new float[11] {0,0,0,0,0,0,0,0,0,0,0};
+        //[Tooltip("BaseHealth,PowerReward,PowerToLevelUp,Strength,Agility,Stamina,Intellect,Spirit,Armor,CritPercentage,MagicResistance")]
+        //[SerializeField] float[] modifiersPercent = new float[11] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        [SerializeField] float strModifier = 0;
+        [SerializeField] float strPercentage = 0;
         [SerializeField] bool isRightHanded = true;
         [SerializeField] bool isMagicAttack = false;
         [SerializeField] Projectile projectile = null;
@@ -34,12 +38,14 @@ namespace RPG.Combat
 
         public float Modifiers(Stat stat)
         {
-            return modifiers[(int)stat];
+            //return modifiers[(int)stat];
+            return strModifier;
         }
 
         public float ModifiersPercent(Stat stat)
         {
-            return modifiersPercent[(int)stat];
+            //return modifiersPercent[(int)stat];
+            return strPercentage;
         }
 
         public void Spawn(Transform rightHand, Transform leftHand, Animator animator)

@@ -49,11 +49,22 @@ namespace RPG.Saving
                 return new Dictionary<string, object>();
             }
 
-            using (FileStream stream = File.Open(path, FileMode.Open))
+            try
             {
-                BinaryFormatter formatter = new BinaryFormatter();
-                return (Dictionary<string, object>)formatter.Deserialize(stream);
+                using (FileStream stream = File.Open(path, FileMode.Open))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    stream.Position = 0;
+                    //stream.Seek(0, SeekOrigin.Begin);
+                    return (Dictionary<string, object>)formatter.Deserialize(stream);
+                }
             }
+            catch (System.Exception e)
+            {
+                print("Error: " +e.StackTrace);
+                return null;
+            }
+
         }
 
         private void SaveFile(string saveFile, object state)

@@ -1,9 +1,12 @@
+using System;
+
 namespace RPG.Core
 {
     /// <summary>
     /// Container class that wraps a value and ensures initialisation is 
     /// called just before first use.
     /// </summary>
+    //[Serializable]
     public class LazyValue<T>
     {
         private T _value;

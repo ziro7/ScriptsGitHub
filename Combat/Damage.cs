@@ -5,6 +5,7 @@ using System;
 
 namespace RPG.Combat
 {
+    [Serializable]
     public class Damage : MonoBehaviour
     {
         [SerializeField] float intMultiplier = 1.3f;
@@ -26,7 +27,6 @@ namespace RPG.Combat
         float weaponDamage = 0;
         float weaponSpeed = 0;
 
-        // Defender stats
         float defenderLevel = 0;
         float defenderAgility = 0;
         float defenderArmor = 0;

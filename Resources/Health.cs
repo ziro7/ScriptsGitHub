@@ -122,7 +122,7 @@ namespace RPG.Resources
 
         public object CaptureState()
         {
-            return healthPoints; //floats are serializable by default.
+            return healthPoints.value; //floats are serializable by default.
         }
 
         public void RestoreState(object state)

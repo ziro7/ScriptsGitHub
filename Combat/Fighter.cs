@@ -10,7 +10,6 @@ using UnityEngine;
 namespace RPG.Combat
 {
     [RequireComponent(typeof(Damage))]
-    //[Serializable]
     public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
     {
         [SerializeField] Transform leftHandTransform = null;
@@ -192,17 +191,12 @@ namespace RPG.Combat
 
         public IEnumerable<float> GetAdditiveModifiers(Stat stat)
         {
-            if(stat == Stat.Strength)
-            {
-                yield return currentWeapon.value.Modifiers(stat);
-            } 
+            yield return currentWeapon.value.Modifiers(stat);
         }
 
         public IEnumerable<float> GetPercentageModifiers(Stat stat)
         {
-            if(stat == Stat.Strength){
-                yield return currentWeapon.value.ModifiersPercent(stat);
-            }
+            yield return currentWeapon.value.ModifiersPercent(stat);
         }
     }
 }

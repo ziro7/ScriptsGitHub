@@ -49,24 +49,15 @@ namespace RPG.Saving
                 return new Dictionary<string, object>();
             }
 
-            try
+            using (FileStream stream = File.Open(path, FileMode.Open))
             {
-                using (FileStream stream = File.Open(path, FileMode.Open))
-                {
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    stream.Position = 0;
-                    //stream.Seek(0, SeekOrigin.Begin);
-                    return (Dictionary<string, object>)formatter.Deserialize(stream);
-                }
+                BinaryFormatter formatter = new BinaryFormatter();
+                stream.Position = 0;
+                //stream.Seek(0, SeekOrigin.Begin);
+                return (Dictionary<string, object>)formatter.Deserialize(stream);
             }
-            catch (System.Exception e)
-            {
-                print("Error: " +e.StackTrace);
-                return null;
-            }
-
         }
-
+ 
         private void SaveFile(string saveFile, object state)
         {
             string path = GetPathFromSaveFile(saveFile);
@@ -83,7 +74,6 @@ namespace RPG.Saving
             {
                 state[saveable.GetUniqueIdentifier()] = saveable.CaptureState();
             }
-
             state["lastSceneBuildIndex"] = SceneManager.GetActiveScene().buildIndex;
         }
 

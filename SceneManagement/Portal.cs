@@ -25,13 +25,19 @@ namespace RPG.SceneManagement
 
         public static Dictionary<DestinationIdentifer, Boolean> PortalsEnabled = new Dictionary<DestinationIdentifer, Boolean>();
 
-        private void Awake() {
+        private void Awake()
+        {
+            AddingThisPortalToDict();
+            SetPortalEffectAndCollider();
+            possibleBosses = FindObjectOfType<BossBehavior>();
+        }
+
+        private void AddingThisPortalToDict()
+        {
             if (!PortalsEnabled.ContainsKey(location))
             {
                 PortalsEnabled.Add(location, isEnabled);
             }
-            EnablePortal();
-            possibleBosses = FindObjectOfType<BossBehavior>();
         }
 
         private void Start()
@@ -53,7 +59,7 @@ namespace RPG.SceneManagement
             }
         }
 
-        private void EnablePortal()
+        private void SetPortalEffectAndCollider()
         {
             if (!isEnabled)
             {
@@ -96,20 +102,21 @@ namespace RPG.SceneManagement
 
             Fader fader = FindObjectOfType<Fader>();
             SavingWrapper savingWrapper = FindObjectOfType<SavingWrapper>(); 
-
+            print("sceneToLoad: " + sceneToLoad);
             yield return fader.Fadeout(fadeOutTime);
-
+            print("Save");
             savingWrapper.Save();
-
+            print("Loading It Async");
             yield return SceneManager.LoadSceneAsync(sceneToLoad);
-
+            print("Load");
             savingWrapper.Load();
-            
+            print("Get Other Portals");
             Portal otherPortal = GetOtherPortal();
+            print("UpdatePlayer");
             UpdatePlayer(otherPortal);
-
+            print("Ssave2ndTime");
             savingWrapper.Save();
-            
+            print("Fade in");
             yield return new WaitForSeconds(fadeWaitTime);
             yield return fader.FadeIn(fadeInTime);
 
@@ -121,7 +128,7 @@ namespace RPG.SceneManagement
             foreach (Portal portal in FindObjectsOfType<Portal>())
             {
                 portal.isEnabled=PortalsEnabled[portal.location];
-                portal.EnablePortal();
+                portal.SetPortalEffectAndCollider();
             }
         }
 
@@ -155,7 +162,7 @@ namespace RPG.SceneManagement
                     if (destinationIdentifer == portal.location)
                     {
                         portal.isEnabled=true;
-                        portal.EnablePortal();
+                        portal.SetPortalEffectAndCollider();
                         PortalsEnabled[portal.location]=true;
                     }
                 }

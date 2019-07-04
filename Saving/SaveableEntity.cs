@@ -1,17 +1,14 @@
-using System;
 using System.Collections.Generic;
-using RPG.Core;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace RPG.Saving
 {
-    [ExecuteAlways]//updates in Edit mode aswell as in play mode.
+    [ExecuteAlways]
     public class SaveableEntity : MonoBehaviour
     {
         [SerializeField] string uniqueIdentifier = "";
-        static Dictionary<string,SaveableEntity> globalLookup = new Dictionary<string, SaveableEntity>();
+        static Dictionary<string, SaveableEntity> globalLookup = new Dictionary<string, SaveableEntity>();
 
         public string GetUniqueIdentifier()
         {
@@ -20,7 +17,7 @@ namespace RPG.Saving
 
         public object CaptureState()
         {
-            Dictionary<string,object> state = new Dictionary<string, object>();
+            Dictionary<string, object> state = new Dictionary<string, object>();
             foreach (ISaveable saveable in GetComponents<ISaveable>())
             {
                 state[saveable.GetType().ToString()] = saveable.CaptureState();
@@ -34,7 +31,7 @@ namespace RPG.Saving
             foreach (ISaveable saveable in GetComponents<ISaveable>())
             {
                 string typeString = saveable.GetType().ToString();
-                if(stateDict.ContainsKey(typeString))
+                if (stateDict.ContainsKey(typeString))
                 {
                     saveable.RestoreState(stateDict[typeString]);
                 }
@@ -50,7 +47,6 @@ namespace RPG.Saving
             SerializedObject serializedObject = new SerializedObject(this);
             SerializedProperty property = serializedObject.FindProperty("uniqueIdentifier");
 
-            //Give GUID to empty or non unique.
             if (string.IsNullOrEmpty(property.stringValue) || !IsUnique(property.stringValue))
             {
                 property.stringValue = System.Guid.NewGuid().ToString();
@@ -63,23 +59,17 @@ namespace RPG.Saving
 
         private bool IsUnique(string candidate)
         {
-            if(!globalLookup.ContainsKey(candidate))
-            {
-                return true;
-            }
-            if(globalLookup[candidate] == this){
-                return true;
-            }
+            if (!globalLookup.ContainsKey(candidate)) return true;
 
-            // The GUID is in the dict but destroyed in a previous scene - ok to keep GUID.
-            if(globalLookup[candidate] == null)
+            if (globalLookup[candidate] == this) return true;
+
+            if (globalLookup[candidate] == null)
             {
                 globalLookup.Remove(candidate);
                 return true;
             }
 
-            // Edge case where this entity have an "old" identificer in the dict.
-            if(globalLookup[candidate].GetUniqueIdentifier() != candidate)
+            if (globalLookup[candidate].GetUniqueIdentifier() != candidate)
             {
                 globalLookup.Remove(candidate);
                 return true;

@@ -59,7 +59,7 @@ namespace RPG.Control
         private IEnumerator SpecialSpawnAttack(){
             System.Random random = new System.Random();
 
-            while(!player.GetComponent<Health>().IsDead()){
+            while(this != null && !player.GetComponent<Health>().IsDead()){
                 for (int i = 0; i < amountToSpawn; i++)
                 {
                     GameObject spawn = PoolDictionary.pools[minionToSpawn.name].GetInstance();

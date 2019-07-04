@@ -7,6 +7,7 @@ using RPG.Resources;
 using UnityEngine.AI;
 using RPG.Control;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 namespace RPG.SceneManagement
 {
@@ -14,22 +15,44 @@ namespace RPG.SceneManagement
     {
         [SerializeField] int sceneToLoad = -1;
         [SerializeField] Transform spawnPoint;
-        [SerializeField] DestinationIdentifer destination = DestinationIdentifer.HomeBase;
-        [SerializeField] DestinationIdentifer location= DestinationIdentifer.HomeBase;
+        [SerializeField] DestinationIdentifer destination;
+        [SerializeField] DestinationIdentifer location;
         [SerializeField] float fadeOutTime = 0.5f;
         [SerializeField] float fadeInTime = 0.8f;
         [SerializeField] float fadeWaitTime= 0.5f;
         [SerializeField] bool isEnabled = false;
 
-        BossBehavior possibleBosses;
+        BossBehavior possibleBoss;
 
         public static Dictionary<DestinationIdentifer, Boolean> PortalsEnabled = new Dictionary<DestinationIdentifer, Boolean>();
 
         private void Awake()
         {
+            possibleBoss = FindObjectOfType<BossBehavior>();
+            Portals.AddPortal(location,this);
+        }
+
+        private void OnEnable()
+        {
+            if (possibleBoss != null)
+            {
+                possibleBoss.GetComponent<Health>().OnBossDeath += PortalEnablerHandler;
+            }
             AddingThisPortalToDict();
             SetPortalEffectAndCollider();
-            possibleBosses = FindObjectOfType<BossBehavior>();
+        }
+
+        private void OnDisable()
+        {
+            if (possibleBoss != null)
+            {
+                possibleBoss.GetComponent<Health>().OnBossDeath -= PortalEnablerHandler;
+            }
+        }
+
+        private void Start()
+        {
+            UpdatePortalsIfEnabled();
         }
 
         private void AddingThisPortalToDict()
@@ -37,25 +60,6 @@ namespace RPG.SceneManagement
             if (!PortalsEnabled.ContainsKey(location))
             {
                 PortalsEnabled.Add(location, isEnabled);
-            }
-        }
-
-        private void Start()
-        { 
-            UpdatePortalsIfEnabled();
-        }
-
-        private void OnEnable() {
-            if (possibleBosses != null)
-            {
-                possibleBosses.GetComponent<Health>().OnBossDeath += PortalEnablerHandler;
-            }
-        }
-
-        private void OnDisable() {
-            if (possibleBosses != null)
-            {
-                possibleBosses.GetComponent<Health>().OnBossDeath -= PortalEnablerHandler;
             }
         }
 
@@ -83,6 +87,15 @@ namespace RPG.SceneManagement
             }
         }
 
+        private void UpdatePortalsIfEnabled()
+        {
+            foreach (Portal portal in FindObjectsOfType<Portal>())
+            {
+                portal.isEnabled = PortalsEnabled[portal.location];
+                portal.SetPortalEffectAndCollider();
+            }
+        }
+
         private void OnTriggerEnter(Collider other) 
         {
             if(other.tag =="Player")
@@ -102,34 +115,31 @@ namespace RPG.SceneManagement
 
             Fader fader = FindObjectOfType<Fader>();
             SavingWrapper savingWrapper = FindObjectOfType<SavingWrapper>(); 
-            print("sceneToLoad: " + sceneToLoad);
-            yield return fader.Fadeout(fadeOutTime);
-            print("Save");
+
+            yield return fader.FadeOut(fadeOutTime);
+
             savingWrapper.Save();
-            print("Loading It Async");
+            
             yield return SceneManager.LoadSceneAsync(sceneToLoad);
-            print("Load");
+            
             savingWrapper.Load();
-            print("Get Other Portals");
+            
             Portal otherPortal = GetOtherPortal();
-            print("UpdatePlayer");
-            UpdatePlayer(otherPortal);
-            print("Ssave2ndTime");
+            
+            if(otherPortal != null){
+                UpdatePlayer(otherPortal);
+            } else
+            {
+                print("Could not find another portal");
+                otherPortal=this;   
+            }           
+            
             savingWrapper.Save();
-            print("Fade in");
+            
             yield return new WaitForSeconds(fadeWaitTime);
             yield return fader.FadeIn(fadeInTime);
 
             Destroy(gameObject);
-        }
-
-        private void UpdatePortalsIfEnabled()
-        {
-            foreach (Portal portal in FindObjectsOfType<Portal>())
-            {
-                portal.isEnabled=PortalsEnabled[portal.location];
-                portal.SetPortalEffectAndCollider();
-            }
         }
 
         private void UpdatePlayer(Portal otherPortal)
@@ -143,14 +153,16 @@ namespace RPG.SceneManagement
 
         private Portal GetOtherPortal()
         {
-            foreach (Portal portal in FindObjectsOfType<Portal>())
-            {
-                if(destination == portal.location){
-                    return portal;
-                }
-            } 
-
-            return null;
+            return Portals.portals[destination];
+            
+            //foreach (Portal portal in FindObjectsOfType<Portal>())
+            //{
+            //    if(destination == portal.location){
+            //        return portal;
+            //    }
+            //}
+            //print("Can't find portal"); 
+            // return null;
         }
 
         public void PortalEnablerHandler(DestinationIdentifer[] portalsToEnableInScene, DestinationIdentifer[] portalsToEnableOutOfScene )

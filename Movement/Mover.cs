@@ -68,7 +68,8 @@ namespace RPG.Movement
             //GetComponent<NavMeshAgent>().enabled = false; //avoid a known bug where the navmesh can cause issues if enabled before setting position.
             //transform.position = position.ToVector();
             //GetComponent<NavMeshAgent>().enabled = true;
-            GetComponent<NavMeshAgent>().Warp(position.ToVector());
+            //GetComponent<NavMeshAgent>().Warp(position.ToVector());
+            GetComponent<NavMeshAgent>().Move(position.ToVector());
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
     }

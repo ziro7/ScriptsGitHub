@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,7 +9,7 @@ namespace RPG.Saving
 {
     public class SavingSystem : MonoBehaviour
     {
-        public IEnumerator LoadLastScene (string saveFile)
+        public IEnumerator LoadLastScene(string saveFile)
         {
             Dictionary<string, object> state = LoadFile(saveFile);
             int buildIndex = SceneManager.GetActiveScene().buildIndex;
@@ -20,12 +18,12 @@ namespace RPG.Saving
                 buildIndex = (int)state["lastSceneBuildIndex"];
             }
             yield return SceneManager.LoadSceneAsync(buildIndex);
-            RestoreState(state);  
+            RestoreState(state);
         }
 
         public void Save(string saveFile)
         {
-            Dictionary<string, object> state = LoadFile(saveFile); //getting the current loadfile so data will be added instead of replacing
+            Dictionary<string, object> state = LoadFile(saveFile);
             CaptureState(state);
             SaveFile(saveFile, state);
         }
@@ -43,24 +41,21 @@ namespace RPG.Saving
         private Dictionary<string, object> LoadFile(string saveFile)
         {
             string path = GetPathFromSaveFile(saveFile);
-
             if (!File.Exists(path))
             {
                 return new Dictionary<string, object>();
             }
-
             using (FileStream stream = File.Open(path, FileMode.Open))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                stream.Position = 0;
-                //stream.Seek(0, SeekOrigin.Begin);
                 return (Dictionary<string, object>)formatter.Deserialize(stream);
             }
         }
- 
+
         private void SaveFile(string saveFile, object state)
         {
             string path = GetPathFromSaveFile(saveFile);
+            print("Saving to " + path);
             using (FileStream stream = File.Open(path, FileMode.Create))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
@@ -74,6 +69,7 @@ namespace RPG.Saving
             {
                 state[saveable.GetUniqueIdentifier()] = saveable.CaptureState();
             }
+
             state["lastSceneBuildIndex"] = SceneManager.GetActiveScene().buildIndex;
         }
 
@@ -82,7 +78,8 @@ namespace RPG.Saving
             foreach (SaveableEntity saveable in FindObjectsOfType<SaveableEntity>())
             {
                 string id = saveable.GetUniqueIdentifier();
-                if(state.ContainsKey(id)){
+                if (state.ContainsKey(id))
+                {
                     saveable.RestoreState(state[id]);
                 }
             }

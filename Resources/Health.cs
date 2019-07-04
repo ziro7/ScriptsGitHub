@@ -71,8 +71,8 @@ namespace RPG.Resources
 
         public void GetHealth(float healthGained)
         {
-            if(healthGained >= GetComponent<BaseStats>().GetStat(Stat.BaseHealth)){
-                healthPoints.value += GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
+            if((healthGained + healthPoints.value) >= GetComponent<BaseStats>().GetStat(Stat.BaseHealth)){
+                healthPoints.value = GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
             } else
             {
                 healthPoints.value += healthGained;

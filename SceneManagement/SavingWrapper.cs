@@ -22,7 +22,6 @@ namespace RPG.SceneManagement
             Fader fader = FindObjectOfType<Fader>();
             fader.FadeOutImmediate();
             yield return fader.FadeIn(fadeInTime);
-            print("Awake have run on savingwrapper");
         }
 
         private void Update() {

@@ -13,6 +13,7 @@ namespace RPG.Resources
     {
         LazyValue<float> healthPoints;
         private bool isDead = false;
+        [SerializeField] float healthPointsFromStamina = 10f;
 
         public delegate void DestinationIdentifer (RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersInScene, RPG.SceneManagement.DestinationIdentifer[] destinationIdentifersOutOfScene);
         public event Action OnDamageTaken;
@@ -24,7 +25,9 @@ namespace RPG.Resources
 
         private float GetIntialHealth()
         {
-            return GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
+            float baseHealth = GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
+            float stamina = GetComponent<BaseStats>().GetStat(Stat.Stamina);
+            return baseHealth + stamina*healthPointsFromStamina;
         }
 
         private void Start() {
@@ -66,7 +69,7 @@ namespace RPG.Resources
         }
 
         public float GetMaxHealthPoints(){
-            return GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
+            return GetIntialHealth();
         }
 
         public void GetHealth(float healthGained)
@@ -77,11 +80,6 @@ namespace RPG.Resources
             {
                 healthPoints.value += healthGained;
             }
-        }
-
-        public void GetFullHealth()
-        {
-            healthPoints.value = GetComponent<BaseStats>().GetStat(Stat.BaseHealth);
         }
 
         private void Die()
@@ -113,6 +111,11 @@ namespace RPG.Resources
                 return;
             }
             power.GainPower(GetComponent<BaseStats>().GetStat(Stat.PowerReward));
+        }
+
+        public void GetFullHealth()
+        {
+            healthPoints.value = GetIntialHealth();
         }
 
         private void RegenerateHealth()
